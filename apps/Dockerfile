@@ -1,14 +1,17 @@
-# Use an official Python runtime as the base image
-FROM python:3.9-slim
+FROM python:3.8-slim
 
-# Set the working directory in the container
-WORKDIR /OpenStack
+# Install required packages
+RUN pip install Flask openstacksdk
 
-# Copy the Python script into the container
-COPY main.py .
+# Copy scripts into the container
+COPY openstack_check.py /app/openstack_check.py
+COPY app.py /app/app.py
 
-# Install the OpenStack command-line client
-RUN pip install --no-cache-dir python-openstackclient
+# Set working directory
+WORKDIR /app
 
-# Command to run the script when the container starts
-CMD ["python", "./main.py"]
+# Expose the port the app runs on
+EXPOSE 5000
+
+# Command to run the application
+CMD ["python", "app.py"]
