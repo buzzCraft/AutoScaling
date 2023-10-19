@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the image name
-IMAGE_NAME="openstack-prometheus"
+IMAGE_NAME="openstack-server-status"
 
 # Stop the container if it's running
 CONTAINER_ID=$(docker ps -qf "ancestor=$IMAGE_NAME")

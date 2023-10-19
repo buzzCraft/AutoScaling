@@ -5,7 +5,7 @@ import logging
 
 logging.basicConfig(
     level=logging.WARNING,
-    filename='app.log',  # Set the minimum log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    filename='server_status.log',  # Set the minimum log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 )
 
