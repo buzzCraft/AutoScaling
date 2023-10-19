@@ -1,20 +1,21 @@
 stages:
   - build
-  - test
+  # - test
   - deploy
 
 image_build:
   stage: build
   script:
     - echo "Stage build, Dockerfile:"
+    - cd OpenStack
     - cat Dockerfile
     - docker build -t scaler:$CI_PIPELINE_ID .
 
-code_test:
-  stage: test
-  script:
-    - cd app
-    - cat main.py
+# code_test:
+#   stage: test
+#   script:
+#     - cd app
+#     - cat main.py
 
 container_deploy1:
     stage: deploy
