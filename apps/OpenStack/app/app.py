@@ -1,6 +1,14 @@
 
 from flask import Flask, Response
 from openstack_check import get_running_servers
+import logging
+
+logging.basicConfig(
+    level=logging.WARNING,  # Set the minimum log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+)
+
+logger = logging.getLogger('get_running_servers')
 
 app = Flask(__name__)
 
