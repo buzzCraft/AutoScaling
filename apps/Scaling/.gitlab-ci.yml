@@ -1,0 +1,25 @@
+stages:
+  - build
+  - test
+  - deploy
+
+image_build:
+  stage: build
+  script:
+    - echo "Stage build, Dockerfile:"
+    - cat Dockerfile
+    - docker build -t scaler:$CI_PIPELINE_ID .
+
+code_test:
+  stage: test
+  script:
+    - cd app
+    - cat main.py
+
+container_deploy1:
+    stage: deploy
+    script:
+      - docker run -d -p 80 --name scaler-w1-$CI_PIPELINE_ID scaler:$CI_PIPELINE_ID
+      - docker ps
+      - docker stop scaler-w1-$CI_PIPELINE_ID
+      - docker rm scaler-w1-$CI_PIPELINE_ID
