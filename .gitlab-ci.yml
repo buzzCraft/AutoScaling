@@ -7,7 +7,7 @@ image_build:
   stage: build
   script:
     - echo "Stage build, Dockerfile:"
-    - cd OpenStack
+    - cd apps/OpenStack
     - cat Dockerfile
     - docker build -t scaler:$CI_PIPELINE_ID .
 
