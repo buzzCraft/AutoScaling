@@ -22,5 +22,5 @@ container_deploy1:
     script:
       - docker run -d -p 80 --name scaler-w1-$CI_PIPELINE_ID scaler:$CI_PIPELINE_ID
       - docker ps
-      - docker stop scaler-w1-$CI_PIPELINE_ID
-      - docker rm scaler-w1-$CI_PIPELINE_ID
+#      - docker stop scaler-w1-$CI_PIPELINE_ID
+#      - docker rm scaler-w1-$CI_PIPELINE_ID
