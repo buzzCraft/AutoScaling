@@ -35,7 +35,7 @@ class Scaler:
 
     
     def delete_instance(self, nr_of_servers):
-        server = self.VMCONTROLLER.delete_instance(nr_of_servers)
+        server = self.VMCONTROLLER.scale_down_servers(nr_of_servers)
         print(f"Deleting server instance: {server}")
 
     def scale(self):
@@ -49,9 +49,9 @@ class Scaler:
             required_servers = self.scaling_1(current_servers, current_players)
             print(f"Required servers: {required_servers}")
             print(type(required_servers))
-        if required_servers < 0:            
+        if required_servers > 0:            
             self.create_instance(required_servers)
-        elif required_servers > 0:
+        elif required_servers < 0:
             self.delete_instance(required_servers)
 
     def calc_capacity(self, current_servers, current_players):

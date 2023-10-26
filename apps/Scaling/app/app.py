@@ -29,8 +29,9 @@ print(f"Scaling scheme: {scaling_scheme}")
 
 # Get the current game status
 p_min, p_max = get_min_max(game=game)
-print(f"Min: {p_min}")
-print(f"Max: {p_max}")
+p_min=int(p_min)
+p_max=int(p_max)
+
 # Round down to nearest 1000 for easier calculations
 p_min = p_min - (p_min % 1000)
 # Round up to nearest 1000 for easier calculations
@@ -41,6 +42,7 @@ baseload = p_min
 fluctuation = p_max - p_min
 # Lets leave 10% of capacity for growth
 capacity_per_server = fluctuation*1.1 / nub_server
+capacity_per_server = int(capacity_per_server)
 
 scaling_solution = Scaler(game=game, 
                           scaling_scheme=scaling_scheme, 

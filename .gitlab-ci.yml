@@ -37,6 +37,13 @@ openstack_exporter_build:
     - cat Dockerfile
     - docker build -t openstack-exporter:$CI_PIPELINE_ID .
 
+openstack_exporter_deploy:
+  stage: deploy
+  script:
+    - docker images | grep openstack-exporter
+    - docker run -d -p 5000:5000 --restart=unless-stopped -e OS_AUTH_URL=$OS_AUTH_URL -e OS_PROJECT_NAME=$OS_PROJECT_NAME -e OS_USERNAME=$OS_USERNAME -e OS_PASSWORD="$OS_PASSWORD" --name openstack-exporter-$CI_PIPELINE_ID openstack-exporter:$CI_PIPELINE_ID
+    - docker ps
+
 scaler deploy:
   stage: deploy
   script:
@@ -44,12 +51,7 @@ scaler deploy:
 
 
 
-openstack_exporter_deploy:
-  stage: deploy
-  script:
-    - docker images | grep openstack-exporter
-    - docker run -d -p 5000:5000 --restart=unless-stopped -e OS_AUTH_URL=$OS_AUTH_URL -e OS_PROJECT_NAME=$OS_PROJECT_NAME -e OS_USERNAME=$OS_USERNAME -e OS_PASSWORD="$OS_PASSWORD" --name openstack-exporter-$CI_PIPELINE_ID openstack-exporter:$CI_PIPELINE_ID
-    - docker ps
+
 
 
 
