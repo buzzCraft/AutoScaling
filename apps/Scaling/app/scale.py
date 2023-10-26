@@ -65,7 +65,7 @@ class Scaler:
         target_capacity = current_players - self.baseload
         # Calculate the percentage of capacity
         capacity_percentage = target_capacity / current_capacity * 100
-        print(f"Current capacity: {current_capacity}")
+        print(f"Current capacity: {capacity_percentage}")
         return capacity_percentage
 
     def scaling_1(self, current_servers, current_players):
