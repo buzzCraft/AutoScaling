@@ -22,7 +22,7 @@ scaler_build:
   stage: build
   script:
     - echo "Stage build, Dockerfile:"
-    - cd apps/OpenStack
+    - cd apps/Scaling
     - cat Dockerfile
     - docker build -t scaler:$CI_PIPELINE_ID .
 openstack_exporter_build:
