@@ -2,6 +2,11 @@ from openstack import connection
 import os
 import logging
 logger = logging.getLogger('scaler')
+import dotenv
+dotenv.load_dotenv()
+
+
+
 
 class OpenStackManager:
     
@@ -14,14 +19,29 @@ class OpenStackManager:
             user_domain_id='default',
             project_domain_id='default'
         )
+        self.image_name = os.getenv("IMAGE_NAME")
+        self.flavor_name = os.getenv("FLAVOR_NAME")
+        self.network_name = os.getenv("NETWORK_NAME")
+        self.instance_base = os.getenv("INSTANCE_BASE")
         
+    def scale_up_servers(self, num_servers):
+        """Scale up the number of servers based on the given image."""
+        for i in range(num_servers):
+            instance_name = f"{self.instance_base}-{i+1}"
+            self.create_instance(instance_name)
+
+    def scale_down_servers(self, num_servers):
+        """Scale down the number of servers based on the given image."""
+        for i in range(num_servers):
+            self.delete_instance()
+
     
-    def create_instance(self, instance_name, image_name, flavor_name, network_name):
+    def create_instance(self, instance_name):
         """Create a new VM instance."""
         try:    
-            image = self.conn.compute.find_image(image_name)
-            flavor = self.conn.compute.find_flavor(flavor_name)
-            network = self.conn.network.find_network(network_name)
+            image = self.conn.compute.find_image(self.image_name)
+            flavor = self.conn.compute.find_flavor(self.flavor_name)
+            network = self.conn.network.find_network(self.network_name)
 
             server = self.conn.compute.create_server(
                 name=instance_name,
@@ -32,33 +52,35 @@ class OpenStackManager:
             
             server = self.conn.compute.wait_for_server(server)
             logger.info(f"Created server {server.name} with id {server.id}")
-            return server
+            return server.name
         except Exception as e:
             logger.error("Error starting new VM" + e)
             return None
     
-def delete_instance(self):
-    """Delete the most recently created VM instance."""
-    try:
-        # Fetch all servers
-        servers = list(self.conn.compute.servers())
-        
-        # If no servers, nothing to delete
-        if not servers:
-            logger.info("No instances found!")
-            return
-        
-        # Sort servers by created date
-        newest_server = sorted(servers, key=lambda s: s.created_at, reverse=True)[0]
-        
-        # Delete the newest server
-        self.conn.compute.delete_server(newest_server)
-        logger.info(f"Deleted newest server {newest_server.name} with id {newest_server.id}")
-    except Exception as e:
-        logger.error(f"Error deleting newest VM: {e}")
-
-# Usage:
-
-# manager = OpenStackManager()
-# manager.create_instance("instance_name", "image_name", "flavor_name", "network_name")
-# manager.delete_instance("instance_name")
+    def delete_instance(self):
+        """Delete the most recently created VM instance with a specific base name and wait for its deletion."""
+        try:
+            # Fetch all servers
+            servers = list(self.conn.compute.servers())
+            
+            # Filter servers with the specified instance base name
+            filtered_servers = [server for server in servers if self.instance_base in server.name]
+            
+            # If no matching servers, nothing to delete
+            if not filtered_servers:
+                logger.info(f"No instances found with base name {self.instance_base}!")
+                return
+            
+            # Sort filtered servers by created date
+            newest_server = sorted(filtered_servers, key=lambda s: s.created_at, reverse=True)[0]
+            
+            # Delete the newest server with the specified base name
+            self.conn.compute.delete_server(newest_server)
+            logger.info(f"Deleted newest server {newest_server.name} with id {newest_server.id}")
+            
+            # Wait for the server to be deleted
+            self.conn.compute.wait_for_delete(newest_server)
+            logger.info(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
+            return newest_server.name
+        except Exception as e:
+            logger.error(f"Error deleting newest VM: {e}")

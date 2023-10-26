@@ -2,6 +2,7 @@ import requests
 from typing import List, Dict, Union, Optional
 import time
 
+
 # Base URL for Prometheus server
 PROMETHEUS_URL = "http://10.196.37.200:9090"
 
@@ -129,6 +130,8 @@ def get_running_servers()->int:
     resp = server_status()
     servers = resp[0]['values'][0][1]
     return servers
+
+
 
 
 

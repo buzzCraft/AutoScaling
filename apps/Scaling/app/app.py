@@ -1,8 +1,11 @@
 from utils import get_min_max, get_running_servers, get_current_players
-from scaler import scale 
+from scale import Scaler
 import logging
 import os
 import time  # import the time module
+import dotenv
+
+dotenv.load_dotenv()
 
 logging.basicConfig(
     level=logging.WARNING,
@@ -18,6 +21,7 @@ game = os.getenv("GAME_NAME"),
 nub_server = int(os.getenv("NUMBER_OF_SERVERS")),
 scaling_scheme = int(os.getenv("SCALING_SCHEME")),
 
+
 # Get the current game status
 p_min, p_max = get_min_max(game=game)
 # Round down to nearest 1000 for easier calculations
@@ -31,15 +35,14 @@ fluctuation = p_max - p_min
 # Lets leave 10% of capacity for growth
 capacity_per_server = fluctuation*1.1 / nub_server
 
+scaling_solution = Scaler(game=game, 
+                          scaling_scheme=scaling_scheme, 
+                          baseload=baseload, 
+                          capacity_per_server=capacity_per_server)
 ## MAIN LOOP
-while True:  # This will keep running indefinitely
-    # Get the current game status
-    current_players = get_current_players(game=game)
-    # Get the current server status
-    current_servers = get_running_servers()
-    
+while True:  # This will keep running indefinitely  
     # Call the scaler function with the scaling scheme selected, baseload, and capacity per server
-    scale(scaling_scheme, baseload, capacity_per_server)
+    scaling_solution.scale()
     time.sleep(240)  # Introduce a delay of 240 seconds (4 minutes) before the next iteration
 
 

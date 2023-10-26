@@ -1,0 +1,6 @@
+{
+    "image_name": "GameServer",
+    "flavor_name": "C1R1_5G",
+    "network_name": "acit",
+    "instance_base": "GameServer"
+}
