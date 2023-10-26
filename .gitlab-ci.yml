@@ -10,7 +10,7 @@ cleanup:
     - docker ps -aq --filter "name=scaler-w1-" | xargs -r docker stop || echo "Failed to stop some containers."
 
     # Remove those containers
-    - docker ps -aq --filter "name=scaler-w1-" | xargs -r docker rm || echo "Failed to remove some containers."
+    - docker ps -aq --filter "name=openstack-exporter-" | xargs -r docker rm || echo "Failed to remove some containers."
 
     # Wait for a few seconds to ensure everything is settled
     - sleep 10
@@ -35,7 +35,7 @@ openstack_exporter_build:
     - cd apps/OpenStack
     - cat Dockerfile
     - docker build -t openstack-exporter:$CI_PIPELINE_ID .
-    
+
 scaler deploy:
   stage: deploy
   script:
