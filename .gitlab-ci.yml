@@ -52,6 +52,5 @@ openstack_exporter_deploy:
       -e OS_PASSWORD=$OS_PASSWORD \
       --name openstack-exporter-$CI_PIPELINE_ID openstack-exporter:$CI_PIPELINE_ID
     - docker ps
-    - docker stop openstack-exporter-$CI_PIPELINE_ID
-    - docker rm openstack-exporter-$CI_PIPELINE_ID
+
 
