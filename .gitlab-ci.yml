@@ -3,20 +3,20 @@ stages:
   # - cleanup
   - build
   - deploy
-# cleanup:
-#   stage: cleanup
-#   script:
-#     - docker stop scaler-w1-$CI_PIPELINE_ID || true
-#     - docker rm scaler-w1-$CI_PIPELINE_ID || true
-#     - docker rmi scaler:$CI_PIPELINE_ID || true
-#     - docker rmi openstack-exporter:$CI_PIPELINE_ID || true
-# scaler_build:
-#   stage: build
-#   script:
-#     - echo "Stage build, Dockerfile:"
-#     - cd apps/OpenStack
-#     - cat Dockerfile
-#     - docker build -t scaler:$CI_PIPELINE_ID .
+cleanup:
+  stage: cleanup
+  script:
+    - docker stop scaler-w1-$CI_PIPELINE_ID || true
+    - docker rm scaler-w1-$CI_PIPELINE_ID || true
+    - docker rmi scaler:$CI_PIPELINE_ID || true
+    - docker rmi openstack-exporter:$CI_PIPELINE_ID || true
+scaler_build:
+  stage: build
+  script:
+    - echo "Stage build, Dockerfile:"
+    - cd apps/OpenStack
+    - cat Dockerfile
+    - docker build -t scaler:$CI_PIPELINE_ID .
 openstack_exporter_build:
   stage: build
   script:
