@@ -1,8 +1,8 @@
+---
 stages:
   - cleanup
   - build
   - deploy
-
 cleanup:
   stage: cleanup
   script:
@@ -10,7 +10,6 @@ cleanup:
     - docker rm scaler-w1-$CI_PIPELINE_ID || true
     - docker rmi scaler:$CI_PIPELINE_ID || true
     - docker rmi openstack-exporter:$CI_PIPELINE_ID || true
-
 scaler_build:
   stage: build
   script:
@@ -18,7 +17,6 @@ scaler_build:
     - cd apps/OpenStack
     - cat Dockerfile
     - docker build -t scaler:$CI_PIPELINE_ID .
-
 openstack_exporter_build:
   stage: build
   script:
@@ -26,31 +24,23 @@ openstack_exporter_build:
     - cd apps/OpenStack
     - cat Dockerfile
     - docker build -t openstack-exporter:$CI_PIPELINE_ID .
-
 container_deploy1:
-    stage: deploy
-    script:
-      - docker run -d -p 7474:7474 \
-        --restart=unless-stopped \
-        -e OS_AUTH_URL=$OS_AUTH_URL \
-        -e OS_PROJECT_NAME=$OS_PROJECT_NAME \
-        -e OS_USERNAME=$OS_USERNAME \
-        -e OS_PASSWORD=$OS_PASSWORD \
-      --name scaler-w1-$CI_PIPELINE_ID scaler:$CI_PIPELINE_ID
-      - docker ps
-      - docker stop scaler-w1-$CI_PIPELINE_ID
-      - docker rm scaler-w1-$CI_PIPELINE_ID
-
+  stage: deploy
+  script:
+    - docker run -d -p 7474:7474 \ --restart=unless-stopped \ -e
+      OS_AUTH_URL=$OS_AUTH_URL \ -e OS_PROJECT_NAME=$OS_PROJECT_NAME \ -e
+      OS_USERNAME=$OS_USERNAME \ -e OS_PASSWORD=$OS_PASSWORD \ --name
+      scaler-w1-$CI_PIPELINE_ID scaler:$CI_PIPELINE_ID
+    - docker ps
+    - docker stop scaler-w1-$CI_PIPELINE_ID
+    - docker rm scaler-w1-$CI_PIPELINE_ID
 openstack_exporter_deploy:
-    stage: deploy
-    script:
-      - docker run -d -p 5000:5000 \
-        --restart=unless-stopped \
-        -e OS_AUTH_URL=$OS_AUTH_URL \
-        -e OS_PROJECT_NAME=$OS_PROJECT_NAME \
-        -e OS_USERNAME=$OS_USERNAME \
-        -e OS_PASSWORD=$OS_PASSWORD \
-        --name openstack-exporter-$CI_PIPELINE_ID openstack-exporter:$CI_PIPELINE_ID
-      - docker ps
-      - docker stop openstack-exporter-$CI_PIPELINE_ID
-      - docker rm openstack-exporter-$CI_PIPELINE_ID
+  stage: deploy
+  script:
+    - docker run -d -p 5000:5000 \ --restart=unless-stopped \ -e
+      OS_AUTH_URL=$OS_AUTH_URL \ -e OS_PROJECT_NAME=$OS_PROJECT_NAME \ -e
+      OS_USERNAME=$OS_USERNAME \ -e OS_PASSWORD=$OS_PASSWORD \ --name
+      openstack-exporter-$CI_PIPELINE_ID openstack-exporter:$CI_PIPELINE_ID
+    - docker ps
+    - docker stop openstack-exporter-$CI_PIPELINE_ID
+    - docker rm openstack-exporter-$CI_PIPELINE_ID
