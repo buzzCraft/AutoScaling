@@ -1,15 +1,15 @@
 ---
 stages:
-  - cleanup
+  # - cleanup
   - build
   - deploy
-cleanup:
-  stage: cleanup
-  script:
-    - docker stop scaler-w1-$CI_PIPELINE_ID || true
-    - docker rm scaler-w1-$CI_PIPELINE_ID || true
-    - docker rmi scaler:$CI_PIPELINE_ID || true
-    - docker rmi openstack-exporter:$CI_PIPELINE_ID || true
+# cleanup:
+#   stage: cleanup
+#   script:
+#     - docker stop scaler-w1-$CI_PIPELINE_ID || true
+#     - docker rm scaler-w1-$CI_PIPELINE_ID || true
+#     - docker rmi scaler:$CI_PIPELINE_ID || true
+#     - docker rmi openstack-exporter:$CI_PIPELINE_ID || true
 # scaler_build:
 #   stage: build
 #   script:
@@ -43,7 +43,6 @@ openstack_exporter_deploy:
   stage: deploy
   script:
     - |
-      echo "DEBUG: OS_AUTH_URL = $OS_AUTH_URL" \
       docker run -d -p 5000:5000 \
       --restart=unless-stopped \
       -e OS_AUTH_URL=$OS_AUTH_URL \
@@ -52,5 +51,6 @@ openstack_exporter_deploy:
       -e OS_PASSWORD=$OS_PASSWORD \
       --name openstack-exporter-$CI_PIPELINE_ID openstack-exporter:$CI_PIPELINE_ID
     - docker ps
+    - docker ps -a
 
 
