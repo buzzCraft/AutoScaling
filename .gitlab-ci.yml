@@ -7,12 +7,13 @@ cleanup:
   stage: cleanup
   script:
     # Stop and remove any containers with names starting with 'scaler-w1-'
-    - docker ps -a | grep 'scaler-w1-' | awk '{print $1}' | xargs -r docker stop
-    - docker ps -a | grep 'scaler-w1-' | awk '{print $1}' | xargs -r docker rm
+    - if [ $(docker ps -a | grep 'scaler-w1-' | wc -l) -gt 0 ]; then docker ps -a | grep 'scaler-w1-' | awk '{print $1}' | xargs docker stop; fi
+    - if [ $(docker ps -a | grep 'scaler-w1-' | wc -l) -gt 0 ]; then docker ps -a | grep 'scaler-w1-' | awk '{print $1}' | xargs docker rm; fi
 
     # Remove images with names starting with 'scaler' or 'openstack-exporter'
-    - docker images | grep 'scaler' | awk '{print $3}' | xargs -r docker rmi
-    - docker images | grep 'openstack-exporter' | awk '{print $3}' | xargs -r docker rmi
+    - if [ $(docker images | grep 'scaler' | wc -l) -gt 0 ]; then docker images | grep 'scaler' | awk '{print $3}' | xargs docker rmi; fi
+    - if [ $(docker images | grep 'openstack-exporter' | wc -l) -gt 0 ]; then docker images | grep 'openstack-exporter' | awk '{print $3}' | xargs docker rmi; fi
+
 
 scaler_build:
   stage: build
