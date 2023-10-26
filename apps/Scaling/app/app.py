@@ -17,13 +17,20 @@ logger = logging.getLogger('scaler')
 
 ## INIT
 # Set up variables
-game = os.getenv("GAME_NAME"),
-nub_server = int(os.getenv("NUMBER_OF_SERVERS")),
-scaling_scheme = int(os.getenv("SCALING_SCHEME")),
+game = os.getenv("GAME_NAME")
+nub_server = int(os.getenv("NUMBER_OF_SERVERS"))
+scaling_scheme = int(os.getenv("SCALING_SCHEME"))
+
+print(f"Game: {game}")
+print(f"Number of servers: {nub_server}")
+print(f"Scaling scheme: {scaling_scheme}")
+
 
 
 # Get the current game status
 p_min, p_max = get_min_max(game=game)
+print(f"Min: {p_min}")
+print(f"Max: {p_max}")
 # Round down to nearest 1000 for easier calculations
 p_min = p_min - (p_min % 1000)
 # Round up to nearest 1000 for easier calculations
