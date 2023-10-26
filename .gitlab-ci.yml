@@ -42,8 +42,7 @@ openstack_exporter_build:
 openstack_exporter_deploy:
   stage: deploy
   script:
-    - |
-      docker run -d -p 5000:5000 \
+    - docker run -d -p 5000:5000 \
       -e OS_AUTH_URL=$OS_AUTH_URL \
       -e OS_PROJECT_NAME=$OS_PROJECT_NAME \
       -e OS_USERNAME=$OS_USERNAME \
