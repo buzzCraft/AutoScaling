@@ -14,6 +14,7 @@ class OpenStackManager:
             user_domain_id='default',
             project_domain_id='default'
         )
+        
     
     def create_instance(self, instance_name, image_name, flavor_name, network_name):
         """Create a new VM instance."""
@@ -36,18 +37,25 @@ class OpenStackManager:
             logger.error("Error starting new VM" + e)
             return None
     
-    def delete_instance(self, instance_name):
-        """Shutdown and delete a VM instance."""
-        try:
-            server = self.conn.compute.find_server(instance_name)
-            if server:
-                self.conn.compute.delete_server(server)
-                logger.info(f"Deleted server {server.name} with id {server.id}")
-            else:
-                logger.info(f"Instance {instance_name} not found!")
-        except Exception as e:
-            logger.error("Error deleting VM" + e)
-
+def delete_instance(self):
+    """Delete the most recently created VM instance."""
+    try:
+        # Fetch all servers
+        servers = list(self.conn.compute.servers())
+        
+        # If no servers, nothing to delete
+        if not servers:
+            logger.info("No instances found!")
+            return
+        
+        # Sort servers by created date
+        newest_server = sorted(servers, key=lambda s: s.created_at, reverse=True)[0]
+        
+        # Delete the newest server
+        self.conn.compute.delete_server(newest_server)
+        logger.info(f"Deleted newest server {newest_server.name} with id {newest_server.id}")
+    except Exception as e:
+        logger.error(f"Error deleting newest VM: {e}")
 
 # Usage:
 
