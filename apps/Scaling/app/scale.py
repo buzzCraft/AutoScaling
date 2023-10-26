@@ -72,7 +72,7 @@ class Scaler:
         Scale up if servers are on 80% capacity
         Scale down if servers are on 50% capacity
         """
-
+        required_servers = 0
         capacity_percentage = self.calc_capacity(current_servers, current_players)
         # If above 80, scale up with one server and check again untill we go belov 80%
         while capacity_percentage > 80:
