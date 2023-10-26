@@ -12,6 +12,9 @@ cleanup:
     # Remove those containers
     - docker ps -aq --filter "name=scaler-w1-" | xargs -r docker rm || echo "Failed to remove some containers."
 
+    # Wait for a few seconds to ensure everything is settled
+    - sleep 10
+
     # Remove images with names containing 'scaler' or 'openstack-exporter'
     - docker images -q | grep 'scaler' | xargs -r docker rmi || echo "Failed to remove some scaler images."
     - docker images -q | grep 'openstack-exporter' | xargs -r docker rmi || echo "Failed to remove some openstack-exporter images."

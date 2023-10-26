@@ -15,9 +15,9 @@ class Scaler:
         self.game = game
         self.scaling_scheme = scaling_scheme
         self.baseload = baseload
-        self.capacity_per_server = capacity_per_server
-        self.current_players = self.get_current_players()
-        self.current_servers = self.get_running_servers()
+        self.capacity_per_server = int(capacity_per_server)
+        self.current_players = int(self.get_current_players())
+        self.current_servers = int(self.get_running_servers())
         self.VMCONTROLLER = OpenStackManager()
 
     def get_current_players(self):
@@ -56,7 +56,10 @@ class Scaler:
     def calc_capacity(self, current_servers, current_players):
         # Calculate the capacity of the current number of servers
         # Calculate the current capacity
-        current_capacity = current_servers * self.capacity_per_server
+        print(f"Current servers: {current_servers}")
+        print(f"Capacity per server: {self.capacity_per_server}")
+        
+        current_capacity = int(current_servers) * self.capacity_per_server
         # Based on current players, calculate the target capacity
         target_capacity = current_players - self.baseload
         # Calculate the percentage of capacity
