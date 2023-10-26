@@ -45,9 +45,9 @@ openstack_exporter_deploy:
     - docker run -d -p 5000:5000 \
     -e OS_AUTH_URL=$OS_AUTH_URL \
     -e OS_PROJECT_NAME=$OS_PROJECT_NAME \
-     -e OS_USERNAME=$OS_USERNAME \
-     -e OS_PASSWORD=$OS_PASSWORD \
-     --name openstack-exporter-$CI_PIPELINE_ID openstack-exporter:$CI_PIPELINE_ID
+    -e OS_USERNAME=$OS_USERNAME \
+    -e OS_PASSWORD=$OS_PASSWORD \
+    --name openstack-exporter-$CI_PIPELINE_ID openstack-exporter:$CI_PIPELINE_ID
     - docker ps
     - docker ps -a
 
