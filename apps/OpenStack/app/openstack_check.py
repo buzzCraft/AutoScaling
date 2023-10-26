@@ -23,3 +23,4 @@ def get_running_servers():
 
 if __name__ == "__main__":
     print(get_running_servers())
+    print("Done!")
