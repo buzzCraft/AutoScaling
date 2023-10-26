@@ -128,6 +128,7 @@ def get_current_players(game:str)->int:
 def get_running_servers()->int:
     # Clean the response and return min and max
     resp = server_status()
+    print(resp)
     servers = int(resp[0]['values'][0][1])
     return servers
 
