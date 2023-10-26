@@ -35,7 +35,8 @@ openstack_exporter_build:
     - cd apps/OpenStack
     - cat Dockerfile
     - docker build -t openstack-exporter:$CI_PIPELINE_ID .
-container_deploy1:
+    
+scaler deploy:
   stage: deploy
   script:
     - docker run -d -p 7474:7474 --restart=unless-stopped -e OS_AUTH_URL="$OS_AUTH_URL" -e OS_PROJECT_NAME="$OS_PROJECT_NAME" -e OS_USERNAME="$OS_USERNAME" -e OS_PASSWORD="$OS_PASSWORD" --name scaler-w1-$CI_PIPELINE_ID scaler:$CI_PIPELINE_ID

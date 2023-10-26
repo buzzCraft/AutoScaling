@@ -122,13 +122,13 @@ def get_min_max(game:str)->List[int]:
 def get_current_players(game:str)->int:
     # Clean the response and return min and max
     resp = game_status(game=game)
-    players = resp[0]['values'][0][1]
+    players = int(resp[0]['values'][0][1])
     return players
 
 def get_running_servers()->int:
     # Clean the response and return min and max
     resp = server_status()
-    servers = resp[0]['values'][0][1]
+    servers = int(resp[0]['values'][0][1])
     return servers
 
 
