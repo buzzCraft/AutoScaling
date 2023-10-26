@@ -1,7 +1,7 @@
 FROM python:3.8-slim
 
 # Install required packages
-RUN pip install openstacksdk, python-dotenv
+RUN pip install openstacksdk python-dotenv
 
 
 # Copy scripts into the container
