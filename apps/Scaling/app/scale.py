@@ -62,7 +62,7 @@ class Scaler:
 
         current_capacity = (int(current_servers) * self.capacity_per_server) + self.baseload
         # Based on current players, calculate the target capacity
-        target_capacity = current_players - self.baseload
+        target_capacity = current_players
         # Calculate the percentage of capacity
         capacity_percentage = target_capacity / current_capacity * 100
         print(f"Current players: {current_players}")
