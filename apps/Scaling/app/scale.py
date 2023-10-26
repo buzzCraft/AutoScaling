@@ -10,7 +10,7 @@ class Scaler:
         scaling_scheme: 1 = Scale based on current players
                         2 = Scale based on current players and time of day
                         3 = Scale based on current players and derivative of player count
-                        
+
         """
 
         self.game = game
@@ -47,12 +47,11 @@ class Scaler:
         # Scaling decision based on the scaling scheme
         if self.scaling_scheme == 1:
             required_servers = self.scaling_1(current_servers, current_players)
-
-        if required_servers < 0:
-            
+            print(f"Required servers: {required_servers}")
+            print(type(required_servers))
+        if required_servers < 0:            
             self.create_instance(required_servers)
         elif required_servers > 0:
-
             self.delete_instance(required_servers)
 
     def calc_capacity(self, current_servers, current_players):
