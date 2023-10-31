@@ -64,7 +64,10 @@ class Scaler:
         # Based on current players, calculate the target capacity
         target_capacity = current_players
         # Calculate the percentage of capacity
-        capacity_percentage = target_capacity / current_capacity * 100
+        if current_capacity == 0:
+            capacity_percentage = 100
+        else:
+            capacity_percentage = target_capacity / current_capacity * 100
         print(f"Current players above baseload: {current_players}")
         print(f"Current capacity: {current_capacity}")
         print(f"Target capacity: {target_capacity}")
