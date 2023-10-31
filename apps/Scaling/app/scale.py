@@ -89,7 +89,7 @@ class Scaler:
         # If below 50, scale down with one server and check again untill we go above 50%
         while capacity_percentage < 50:
             required_servers -= 1
-            #debug fix
+            #debug fix..
             if abs(required_servers) > current_servers:
                 required_servers = -current_servers
                 break
