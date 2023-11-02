@@ -3,7 +3,7 @@ import requests
 
 # Create a fake serverstack for a game
 class FakeServer:
-    def __init_(self, gamename, max_servers=10):
+    def __init__(self, gamename, max_servers=10):
         self.max_servers = max_servers
         self.gamename = gamename
         self.servers = 0
