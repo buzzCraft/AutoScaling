@@ -20,6 +20,8 @@ def get_running_servers():
     except Exception as e:
         logger.error(e)
         return -1
+    
+
 
 if __name__ == "__main__":
     print(get_running_servers())

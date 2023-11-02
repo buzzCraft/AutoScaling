@@ -38,6 +38,7 @@ class OpenStackManager:
         print(f"Attempting to scale down servers {num_servers}")
         num_servers = int(num_servers)
         for i in range(num_servers):
+            print(f"Deleting server {i+1}")
             self.delete_instance()
 
     
@@ -96,8 +97,8 @@ if __name__ == "__main__":
     while inp != "Q":
         inp = input("Scale [U]p or [D]own?")
         if inp == "U":
-            osm.scale_up_servers(1)
+            osm.scale_up_servers(3)
         elif inp == "D":
-            osm.scale_down_servers(1)
+            osm.scale_down_servers(3)
         else:
             print("Invalid input")
