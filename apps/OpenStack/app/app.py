@@ -39,21 +39,20 @@ def create_fakeserver(gamename):
 
 @app.route('/fakeserver/scaleup/<gamename>', methods=['POST'])
 def scale_up(gamename):
-    num_servers = request.json.get('num_servers', 1)  # Default to scaling up by 1
     if gamename in fake_servers:
-        fake_servers[gamename].scale_up(num_servers)
+        fake_servers[gamename].scale_up(1)
         return jsonify(fake_servers[gamename].getdata())
     else:
         return jsonify({"error": "Fake server not found"}), 404
 
 @app.route('/fakeserver/scaledown/<gamename>', methods=['POST'])
-def scale_down(gamename):
-    num_servers = request.json.get('num_servers', 1)  # Default to scaling down by 1
+def scale_down(gamename): 
     if gamename in fake_servers:
-        fake_servers[gamename].scale_down(num_servers)
+        fake_servers[gamename].scale_down(1)
         return jsonify(fake_servers[gamename].getdata())
     else:
         return jsonify({"error": "Fake server not found"}), 404
+
     
 
 if __name__ == "__main__":
