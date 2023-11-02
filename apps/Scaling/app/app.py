@@ -9,7 +9,7 @@ import dotenv
 dotenv.load_dotenv()
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.CRITICAL,
     filename='scaler.log',  # Set the minimum log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 )

@@ -37,3 +37,6 @@ class FakeServer:
         response = requests.post(url)
         logger.debug(response.json())
         return response.json()
+    
+    def get_servers(self):
+        return self.servers

@@ -126,6 +126,7 @@ def get_current_players(game:str)->int:
     return players
 
 def get_running_servers()->int:
+    # TODO FIX THIS TO WORK WITH FAKE SERVERS AS WELL
     # Clean the response and return min and max
     resp = server_status()
     print(resp)

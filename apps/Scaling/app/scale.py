@@ -33,6 +33,8 @@ class Scaler:
 
     def get_running_servers(self):
         # Return the current number of running servers.
+        if self.fake:
+            return self.VMCONTROLLER.get_servers()
         return get_running_servers()
 
     def create_instance(self, nr_of_servers):
