@@ -92,7 +92,8 @@ class Scaler:
         # If between 80 and 50, check if we can remove a server and still be under 80%
         if capacity_percentage < 80 and capacity_percentage > 50:
             capacity_percentage = self.calc_capacity(current_servers+required_servers-1, current_players)
-            if capacity_percentage > 80:
+            print(f"Capacity percentage after removing a server: {capacity_percentage}")
+            if capacity_percentage < 80:
                 required_servers -= 1
 
         # If below 50, scale down with one server and check again untill we go above 50%
