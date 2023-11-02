@@ -87,11 +87,12 @@ class OpenStackManager:
 
 if __name__ == "__main__":
     osm = OpenStackManager()
-    input("Scale [U]p or [D]own?")
-    if input == "U":
-        osm.scale_up_servers(1)
-    elif input == "D":
-        osm.scale_down_servers(1)
-    else:
-        print("Invalid input")
-        
+    inp = ""
+    while inp != "Q":
+        inp = input("Scale [U]p or [D]own?")
+        if inp == "U":
+            osm.scale_up_servers(1)
+        elif inp == "D":
+            osm.scale_down_servers(1)
+        else:
+            print("Invalid input")
