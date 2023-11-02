@@ -85,6 +85,7 @@ class OpenStackManager:
         
         # Wait for the server to be deleted
         self.conn.compute.wait_for_delete(newest_server)
+        print(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
         logger.info(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
         return newest_server.name
 

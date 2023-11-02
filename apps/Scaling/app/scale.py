@@ -50,7 +50,8 @@ class Scaler:
         # Scaling decision based on the scaling scheme
         if self.scaling_scheme == 1:
             required_servers = self.scaling_1(current_servers, current_players)
-            print(f"Required servers: {required_servers}")
+            
+        print(f"Required servers: {required_servers}")
         if required_servers > 0:            
             self.create_instance(required_servers)
         elif required_servers < 0:
@@ -99,6 +100,9 @@ class Scaler:
             if new_capacity_percentage >= 50:
                 break  # We've reached an optimal number of servers
             capacity_percentage = new_capacity_percentage
+        
+        print(f"New capacity: {capacity_percentage}")
+        
 
         return required_servers
 
