@@ -54,8 +54,10 @@ def setup_g(game, nub_server, capacity_per_server, baseload, fake=False):
     return scaling_solution
 
 game_list = games.split(",")
+logger.info(f"Game list: {game_list}")
 scaler_list = []
 for game in game_list:
+    logger.info(f"Setting up scaler for {game}")
     scaler_list.append(setup_g(game, nub_server, 0 ,0, fake=True))
     
 ## MAIN LOOP
