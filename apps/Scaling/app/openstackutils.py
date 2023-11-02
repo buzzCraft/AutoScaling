@@ -1,4 +1,5 @@
 from openstack import connection
+from utils import get_running_servers
 import os
 import logging
 logger = logging.getLogger('scaler')
@@ -26,8 +27,9 @@ class OpenStackManager:
         
     def scale_up_servers(self, num_servers):
         """Scale up the number of servers based on the given image."""
+        running_servers = get_running_servers()
         for i in range(num_servers):
-            instance_name = f"{self.instance_base}-{i+1}"
+            instance_name = f"{self.instance_base}-{running_servers+1+i}"
             self.create_instance(instance_name)
 
     def scale_down_servers(self, num_servers):
