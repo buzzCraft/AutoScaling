@@ -68,6 +68,7 @@ class OpenStackManager:
 
         # Fetch all servers
         servers = list(self.conn.compute.servers())
+        print(servers)
         
         # Filter servers with the specified instance base name
         filtered_servers = [server for server in servers if self.instance_base in server.name]
