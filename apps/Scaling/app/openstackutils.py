@@ -35,10 +35,9 @@ class OpenStackManager:
 
     def scale_down_servers(self, num_servers):
         """Scale down the number of servers based on the given image."""
-        print(f"Attempting to scale down servers {num_servers}")
         num_servers = int(abs(num_servers))
         for i in range(num_servers):
-            print(f"Deleting server {i+1}")
+            logger.info(f"Deleting server {i+1}")
             self.delete_instance()
 
     
@@ -75,7 +74,7 @@ class OpenStackManager:
         
         # If no matching servers, nothing to delete
         if not filtered_servers:
-            logger.info(f"No instances found with base name {self.instance_base}!")
+            logger.warning(f"No instances found with base name {self.instance_base}!")
             return
         
         # Sort filtered servers by created date
@@ -83,11 +82,10 @@ class OpenStackManager:
         
         # Delete the newest server with the specified base name
         self.conn.compute.delete_server(newest_server)
-        logger.info(f"Deleted newest server {newest_server.name} with id {newest_server.id}")
+
         
         # Wait for the server to be deleted
         self.conn.compute.wait_for_delete(newest_server)
-        print(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
         logger.info(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
         return newest_server.name
 

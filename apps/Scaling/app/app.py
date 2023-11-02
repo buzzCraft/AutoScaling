@@ -8,7 +8,7 @@ import dotenv
 dotenv.load_dotenv()
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     filename='scaler.log',  # Set the minimum log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 )
@@ -21,9 +21,10 @@ game = os.getenv("GAME_NAME")
 nub_server = int(os.getenv("NUMBER_OF_SERVERS"))
 scaling_scheme = int(os.getenv("SCALING_SCHEME"))
 
-print(f"Game: {game}")
-print(f"Number of servers: {nub_server}")
-print(f"Scaling scheme: {scaling_scheme}")
+logger.info(f"Game: {game}")
+logger.info(f"Number of servers avaible: {nub_server}")
+logger.info(f"Scaling scheme: {scaling_scheme}")
+
 
 
 
