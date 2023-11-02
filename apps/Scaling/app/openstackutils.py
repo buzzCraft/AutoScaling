@@ -84,3 +84,14 @@ class OpenStackManager:
             return newest_server.name
         except Exception as e:
             logger.error(f"Error deleting newest VM: {e}")
+
+if __name__ == "__main__":
+    osm = OpenStackManager()
+    input("Scale [U]p or [D]own?")
+    if input == "U":
+        osm.scale_up_servers(1)
+    elif input == "D":
+        osm.scale_down_servers(1)
+    else:
+        print("Invalid input")
+        
