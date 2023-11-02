@@ -1,6 +1,7 @@
 from utils import get_min_max, get_running_servers, get_current_players
 from openstackutils import OpenStackManager
-
+import logging
+logger = logging.getLogger('scaler')
 class Scaler:
     """
     Scaler class to scale the game servers based on the scaling scheme.
@@ -30,28 +31,25 @@ class Scaler:
         return get_running_servers()
 
     def create_instance(self, nr_of_servers):
-        print(f"Creating server instance")
         self.VMCONTROLLER.scale_up_servers(nr_of_servers)
-        print(f"Created {nr_of_servers} server instances")
-        
 
     
     def delete_instance(self, nr_of_servers):
-        print(f"Deleting server instance")
         self.VMCONTROLLER.scale_down_servers(nr_of_servers)
-        print(f"Deleted {nr_of_servers} server instances")
+        logger.info(f"Deleted {nr_of_servers} server instances")
+
 
     def scale(self):
         current_players = self.get_current_players()
         current_servers = self.get_running_servers()
         required_servers = 0
-        print(f"Current players: {current_players}, Current servers: {current_servers}")
+        logger.info(f"Current players: {current_players}, Current servers: {current_servers}")
+
         
         # Scaling decision based on the scaling scheme
         if self.scaling_scheme == 1:
             required_servers = self.scaling_1(current_servers, current_players)
-            
-        print(f"Required servers: {required_servers}")
+        logger.info(f"Required servers: {required_servers}")
         if required_servers > 0:            
             self.create_instance(required_servers)
         elif required_servers < 0:
@@ -60,8 +58,8 @@ class Scaler:
     def calc_capacity(self, current_servers, current_players):
         # Calculate the capacity of the current number of servers
         # Calculate the current capacity
-        print(f"Current servers: {current_servers}")
-        print(f"Capacity per server: {self.capacity_per_server}")
+        logger.debug(f"Current players: {current_players}")
+        logger.debug(f"Current servers: {current_servers}")
         current_players = int(current_players) - self.baseload
         current_capacity = (int(current_servers) * self.capacity_per_server)
         # Based on current players, calculate the target capacity
@@ -71,11 +69,13 @@ class Scaler:
             capacity_percentage = 100
         else:
             capacity_percentage = target_capacity / current_capacity * 100
-        print(f"Current players above baseload: {current_players}")
-        print(f"Current capacity: {current_capacity}")
-        print(f"Target capacity: {target_capacity}")
-        print(f"Baseline: {self.baseload}")
-        print(f"Current capacity: {capacity_percentage}")
+        logger.debug(f"Current players above baseload: {current_players}")
+        logger.debug(f"Current capacity: {current_capacity}")
+        logger.debug(f"Target capacity: {target_capacity}")
+        logger.debug(f"Baseline: {self.baseload}")
+        logger.debug(f"Current capacity: {capacity_percentage}")
+        
+
         return capacity_percentage
 
     def scaling_1(self, current_servers, current_players):
@@ -100,9 +100,7 @@ class Scaler:
             if new_capacity_percentage >= 50:
                 break  # We've reached an optimal number of servers
             capacity_percentage = new_capacity_percentage
-        
-        print(f"New capacity: {capacity_percentage}")
-        
+        logger.debug(f"New capacity: {capacity_percentage}")     
 
         return required_servers
 
