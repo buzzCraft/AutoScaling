@@ -1,12 +1,13 @@
 from utils import get_min_max, get_running_servers, get_current_players
 from openstackutils import OpenStackManager
+from fakeserver import FakeServer
 import logging
 logger = logging.getLogger('scaler')
 class Scaler:
     """
     Scaler class to scale the game servers based on the scaling scheme.
     """
-    def __init__(self,game, scaling_scheme, baseload, capacity_per_server):
+    def __init__(self,game, scaling_scheme, baseload, capacity_per_server, fake):
         """
         scaling_scheme: 1 = Scale based on current players
                         2 = Scale based on current players and time of day
@@ -20,7 +21,11 @@ class Scaler:
         self.capacity_per_server = int(capacity_per_server)
         self.current_players = int(self.get_current_players())
         self.current_servers = int(self.get_running_servers())
-        self.VMCONTROLLER = OpenStackManager()
+        self.fake = fake
+        if self.fake:
+            self.VMCONTROLLER = FakeServer(game)
+        else:
+            self.VMCONTROLLER = OpenStackManager(game)
 
     def get_current_players(self):
         return get_current_players(self.game)
