@@ -30,13 +30,16 @@ class Scaler:
         return get_running_servers()
 
     def create_instance(self, nr_of_servers):
-        server = self.VMCONTROLLER.scale_up_servers(nr_of_servers)
         print(f"Creating server instance")
+        self.VMCONTROLLER.scale_up_servers(nr_of_servers)
+        print(f"Created {nr_of_servers} server instances")
+        
 
     
     def delete_instance(self, nr_of_servers):
-        server = self.VMCONTROLLER.scale_down_servers(nr_of_servers)
         print(f"Deleting server instance")
+        self.VMCONTROLLER.scale_down_servers(nr_of_servers)
+        print(f"Deleted {nr_of_servers} server instances")
 
     def scale(self):
         current_players = self.get_current_players()

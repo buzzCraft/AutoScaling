@@ -27,6 +27,7 @@ class OpenStackManager:
         
     def scale_up_servers(self, num_servers):
         """Scale up the number of servers based on the given image."""
+        num_servers = int(num_servers)
         running_servers = get_running_servers()
         for i in range(num_servers):
             instance_name = f"{self.instance_base}-{running_servers+1+i}"
@@ -34,6 +35,7 @@ class OpenStackManager:
 
     def scale_down_servers(self, num_servers):
         """Scale down the number of servers based on the given image."""
+        num_servers = int(num_servers)
         for i in range(num_servers):
             self.delete_instance()
 
