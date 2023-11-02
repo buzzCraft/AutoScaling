@@ -23,7 +23,7 @@ class Scaler:
         self.current_servers = int(self.get_running_servers())
         self.fake = fake
         if self.fake:
-            self.VMCONTROLLER = FakeServer(game)
+            self.VMCONTROLLER = FakeServer(gamename=game)
         else:
             self.VMCONTROLLER = OpenStackManager(game)
 
@@ -89,6 +89,7 @@ class Scaler:
         Scale up if servers are on 80% capacity
         Scale down if servers are on 50% capacity
         """
+        logger.debug(f"Scaling scheme 1")
         required_servers = 0
         capacity_percentage = self.calc_capacity(current_servers, current_players)
 
@@ -106,7 +107,7 @@ class Scaler:
                 break  # We've reached an optimal number of servers
             capacity_percentage = new_capacity_percentage
         logger.debug(f"New capacity: {capacity_percentage}")     
-
+        logger.debug(f"Required servers: {required_servers}")
         return required_servers
 
         

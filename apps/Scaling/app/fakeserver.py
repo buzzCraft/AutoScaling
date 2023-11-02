@@ -1,5 +1,6 @@
 import requests
-
+import logging
+logger = logging.getLogger('scaler')
 
 # Create a fake serverstack for a game
 class FakeServer:
@@ -10,24 +11,29 @@ class FakeServer:
         self.create_fakeserver()
 
     def scale_up_servers(self, nr_of_servers):
+        logger.info(f"Scaling up {nr_of_servers} fake servers")
         for i in range(abs(nr_of_servers)):
             self.scale_up()
 
     def scale_down_servers(self, nr_of_servers):
+        logger.info(f"Scaling down {nr_of_servers} fake servers")
         for i in range(abs(nr_of_servers)):
             self.scale_down()
 
     def create_fakeserver(self):
         url = f"http://10.196.37.200:5000/fakeserver/create/{self.gamename}"
         response = requests.post(url)
+        logger.debug(response.json())
         return response.json()
 
     def scale_up(self):
         url = f"http://10.196.37.200:5000/fakeserver/scaleup/{self.gamename}"
         response = requests.post(url)
+        logger.debug(response.json())
         return response.json()
 
     def scale_down(self):
         url = f"http://10.196.37.200:5000/fakeserver/scaledown/{self.gamename}"
         response = requests.post(url)
+        logger.debug(response.json())
         return response.json()
