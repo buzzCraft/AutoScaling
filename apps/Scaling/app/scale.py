@@ -7,7 +7,7 @@ class Scaler:
     """
     Scaler class to scale the game servers based on the scaling scheme.
     """
-    def __init__(self,game, scaling_scheme, baseload, capacity_per_server, fake):
+    def __init__(self,game, scaling_scheme, baseload, capacity_per_server, fake=False):
         """
         scaling_scheme: 1 = Scale based on current players
                         2 = Scale based on current players and time of day
@@ -33,7 +33,7 @@ class Scaler:
 
     def get_running_servers(self):
         # Return the current number of running servers.
-        if self.fake:
+        if self.fake == True:
             return self.VMCONTROLLER.get_servers()
         return get_running_servers()
 
