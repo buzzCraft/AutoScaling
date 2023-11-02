@@ -20,12 +20,14 @@ class Scaler:
         self.baseload = baseload
         self.capacity_per_server = int(capacity_per_server)
         self.current_players = int(self.get_current_players())
-        self.current_servers = int(self.get_running_servers())
+        
         self.fake = fake
         if self.fake:
             self.VMCONTROLLER = FakeServer(gamename=game)
+            self.current_servers = self.VMCONTROLLER.get_servers()
         else:
             self.VMCONTROLLER = OpenStackManager(game)
+            self.current_servers = int(self.get_running_servers())
 
     def get_current_players(self):
         return get_current_players(self.game)
