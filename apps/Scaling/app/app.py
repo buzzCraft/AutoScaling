@@ -38,12 +38,14 @@ p_min = p_min - (p_min % 1000)
 # Round up to nearest 1000 for easier calculations
 p_max = p_max + (1000 - (p_max % 1000))
 # Set baseload to p_min
-baseload = p_min
-# Calculate server capacity
-fluctuation = p_max - p_min
-# Lets leave 10% of capacity for growth
-capacity_per_server = fluctuation*1.1 / nub_server
-capacity_per_server = int(capacity_per_server)
+# baseload = p_min
+# # Calculate server capacity
+# fluctuation = p_max - p_min
+# # Lets leave 10% of capacity for growth
+# capacity_per_server = fluctuation*1.1 / nub_server
+# capacity_per_server = int(capacity_per_server)
+capacity_per_server = p_max / nub_server
+baseload = 0
 
 scaling_solution = Scaler(game=game, 
                           scaling_scheme=scaling_scheme, 
