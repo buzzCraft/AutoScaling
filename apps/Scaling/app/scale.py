@@ -31,12 +31,12 @@ class Scaler:
 
     def create_instance(self, nr_of_servers):
         server = self.VMCONTROLLER.scale_up_servers(nr_of_servers)
-        print(f"Creating server instance: {server}")
+        print(f"Creating server instance")
 
     
     def delete_instance(self, nr_of_servers):
         server = self.VMCONTROLLER.scale_down_servers(nr_of_servers)
-        print(f"Deleting server instance: {server}")
+        print(f"Deleting server instance")
 
     def scale(self):
         current_players = self.get_current_players()
@@ -48,7 +48,6 @@ class Scaler:
         if self.scaling_scheme == 1:
             required_servers = self.scaling_1(current_servers, current_players)
             print(f"Required servers: {required_servers}")
-            print(type(required_servers))
         if required_servers > 0:            
             self.create_instance(required_servers)
         elif required_servers < 0:
@@ -83,28 +82,22 @@ class Scaler:
         """
         required_servers = 0
         capacity_percentage = self.calc_capacity(current_servers, current_players)
-        # If above 80, scale up with one server and check again untill we go belov 80%
-        
+
+        # Scale up if above 80% capacity
         while capacity_percentage > 80:
             required_servers += 1
-            capacity_percentage = self.calc_capacity(current_servers+required_servers, current_players)
-        
-        # If between 80 and 50, check if we can remove a server and still be under 80%
-        if capacity_percentage < 80 and capacity_percentage > 50:
-            capacity_percentage = self.calc_capacity(current_servers+required_servers-1, current_players)
-            print(f"Capacity percentage after removing a server: {capacity_percentage}")
-            if capacity_percentage < 80:
-                required_servers -= 1
+            capacity_percentage = self.calc_capacity(current_servers + required_servers, current_players)
 
-        # If below 50, scale down with one server and check again untill we go above 50%
-        while capacity_percentage < 50:
+        # Scale down if below 50% capacity but ensure that we do not scale down below 1 server
+        while capacity_percentage < 50 and current_servers + required_servers > 1:
             required_servers -= 1
-            #debug fix..
-            if abs(required_servers) > current_servers:
-                required_servers = -current_servers
-                break
-            capacity_percentage = self.calc_capacity(current_servers+required_servers, current_players)
+            new_capacity_percentage = self.calc_capacity(current_servers + required_servers, current_players)
+            # If scaling down once would bring us above 50%, we check to see if we should scale down
+            if new_capacity_percentage >= 50:
+                break  # We've reached an optimal number of servers
+            capacity_percentage = new_capacity_percentage
+
+        return required_servers
 
         
-        return required_servers
     
