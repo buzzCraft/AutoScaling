@@ -35,7 +35,7 @@ class OpenStackManager:
 
     def scale_down_servers(self, num_servers):
         """Scale down the number of servers based on the given image."""
-        print(f"Attempting to scale down servers {num_servers}}")
+        print(f"Attempting to scale down servers {num_servers}")
         num_servers = int(num_servers)
         for i in range(num_servers):
             self.delete_instance()
