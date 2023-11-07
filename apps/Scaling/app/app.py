@@ -43,7 +43,7 @@ def setup_g(game, nub_server, capacity_per_server, baseload, fake=False):
     # Calculate server capacity
     fluctuation = p_max - baseload
     # Lets leave 10% of capacity for growth
-    if capacity_per_server != 0:
+    if capacity_per_server == 0:
         capacity_per_server = int(fluctuation*1.1 / nub_server)
 
     scaling_solution = Scaler(game=game, 
@@ -59,7 +59,7 @@ logger.info(f"Game list: {game_list}")
 scaler_list = []
 for game in game_list:
     logger.info(f"Setting up scaler for {game}")
-    scaler_list.append(setup_g(game, nub_server, 0 ,0, fake=True))
+    scaler_list.append(setup_g(game=game, nub_server = nub_server, capacity_per_server = 0 ,baseload = 1, fake=True))
     
 ## MAIN LOOP
 while True:  # This will keep running indefinitely  
