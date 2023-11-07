@@ -100,14 +100,18 @@ class Scaler:
         # Scale up if above 80% capacity
         while capacity_percentage > 80:
             required_servers += 1
+            if required_servers + current_servers == 7:
+                break
             capacity_percentage = self.calc_capacity(current_servers + required_servers, current_players)
 
         # Scale down if below 50% capacity but ensure that we do not scale down below 1 server
-        while capacity_percentage < 50 and current_servers + required_servers > 1:
+        while capacity_percentage < 40 and current_servers + required_servers > 1:
             required_servers -= 1
+            if required_servers + current_servers == 1:
+                break
             new_capacity_percentage = self.calc_capacity(current_servers + required_servers, current_players)
             # If scaling down once would bring us above 50%, we check to see if we should scale down
-            if new_capacity_percentage >= 50:
+            if new_capacity_percentage >= 40:
                 break  # We've reached an optimal number of servers
             capacity_percentage = new_capacity_percentage
         logger.debug(f"New capacity: {capacity_percentage}")     
