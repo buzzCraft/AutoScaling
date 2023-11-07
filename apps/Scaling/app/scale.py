@@ -30,7 +30,13 @@ class Scaler:
             self.current_servers = int(self.get_running_servers())
 
     def get_current_players(self):
-        return get_current_players(self.game)
+        cur_player = get_current_players(self.game)
+        # Fix for the data not being updated
+        if cur_player != 0:
+            self.current_players = cur_player
+        return self.current_players
+        
+    
 
 
     def get_running_servers(self):
