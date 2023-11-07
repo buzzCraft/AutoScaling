@@ -9,7 +9,7 @@ import dotenv
 dotenv.load_dotenv()
 
 logging.basicConfig(
-    level=logging.CRITICAL,
+    level=logging.INFO,
     filename='scaler.log',  # Set the minimum log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 )
@@ -51,6 +51,7 @@ def setup_g(game, nub_server, capacity_per_server, baseload, fake=False):
                             baseload=baseload, 
                             capacity_per_server=capacity_per_server,
                             fake=fake)
+    logger.info(f"Game: {game}, Baseload: {baseload}, Capacity per server: {capacity_per_server}")
     return scaling_solution
 
 game_list = games.split(",")
