@@ -19,6 +19,8 @@ class Scaler:
         self.scaling_scheme = int(scaling_scheme)
         self.baseload = baseload
         self.capacity_per_server = int(capacity_per_server)
+        # Just init to something
+        self.current_players = 1000
         self.current_players = int(self.get_current_players())
         
         self.fake = fake
