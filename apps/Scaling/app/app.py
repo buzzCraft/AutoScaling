@@ -19,9 +19,9 @@ logger = logging.getLogger("scaler")
 ## INIT
 # Set up variables
 games = os.getenv("GAME_NAME")
-nub_server = int(os.getenv("NUMBER_OF_SERVERS"))
-scaling_scheme = int(os.getenv("SCALING_SCHEME"))
-fake_list = int(os.getenv("FAKE"))
+nub_server = os.getenv("NUMBER_OF_SERVERS")
+scaling_scheme = os.getenv("SCALING_SCHEME")
+fake_list = os.getenv("FAKE")
 
 
 # Split the environment variable strings into lists
