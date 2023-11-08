@@ -68,6 +68,7 @@ logger.info(f"Scaling scheme: {scaling_scheme}")
 
 def setup_g(game, nub_server, capacity_per_server, baseload, number = 1, scaler=1, fake=False):
     """Calculate the baseload for the game"""
+    print(game)
     p_min, p_max = get_min_max(game=game)
     p_min = int(p_min)
     p_max = int(p_max)
