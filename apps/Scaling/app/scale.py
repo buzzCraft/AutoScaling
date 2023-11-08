@@ -7,7 +7,7 @@ class Scaler:
     """
     Scaler class to scale the game servers based on the scaling scheme.
     """
-    def __init__(self,game, scaling_scheme, baseload, capacity_per_server, fake=False):
+    def __init__(self,game, scaling_scheme, baseload, capacity_per_server,server_suffix, number_of_servers, fake=False):
         """
         scaling_scheme: 1 = Scale based on current players
                         2 = Scale based on current players and time of day
@@ -19,13 +19,16 @@ class Scaler:
         self.scaling_scheme = int(scaling_scheme)
         self.baseload = baseload
         self.capacity_per_server = int(capacity_per_server)
+        self.server_name = f"{game} {server_suffix}"
+        self.number_of_servers = number_of_servers
+
         # Just init to something
         self.current_players = 1000
         self.current_players = int(self.get_current_players())
         
         self.fake = fake
         if self.fake:
-            self.VMCONTROLLER = FakeServer(gamename=game)
+            self.VMCONTROLLER = FakeServer(gamename=self.server_name)
             self.current_servers = self.VMCONTROLLER.get_servers()
         else:
             self.VMCONTROLLER = OpenStackManager(game)
@@ -64,7 +67,7 @@ class Scaler:
 
         
         # Scaling decision based on the scaling scheme
-        if self.scaling_scheme == 1:
+        if self.scaling_scheme != 0:
             required_servers = self.scaling_1(current_servers, current_players)
         logger.info(f"Required servers: {required_servers}")
         if required_servers > 0:            
@@ -108,7 +111,7 @@ class Scaler:
         # Scale up if above 80% capacity
         while capacity_percentage > 80:
             required_servers += 1
-            if required_servers + current_servers == 7:
+            if required_servers + current_servers == self.number_of_servers:
                 break
             capacity_percentage = self.calc_capacity(current_servers + required_servers, current_players)
 
@@ -125,6 +128,7 @@ class Scaler:
         logger.debug(f"New capacity: {capacity_percentage}")     
         logger.debug(f"Required servers: {required_servers}")
         return required_servers
+    
 
         
     
