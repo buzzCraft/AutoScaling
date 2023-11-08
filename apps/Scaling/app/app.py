@@ -4,6 +4,7 @@ import logging
 import os
 import time  # import the time module
 import dotenv
+import random 
 
 
 dotenv.load_dotenv()
@@ -108,7 +109,11 @@ for game in game_list:
     game_name = game[0]
     # The game name should be GameName 1, GameName 2, etc. if there are multiple games of the same type
     # Strip the number from the name and add it to a number var
-    game_number = game_name.split(" ")[1]
+    try:
+        game_number = game_name.split(" ")[1]
+    except:
+        logger.info(f"Game {game_name} has no number")
+        game_number = random.randint(1, 100)
     # And remove the number from the name
     game_name = game_name.split(" ")[0]
     nub_server = int(game[1])
