@@ -129,7 +129,7 @@ for game in list_of_games:
             scaler=scaling_scheme,
             capacity_per_server=0,
             baseload=1,
-            fake=fake,
+            fake=fake
         )
     )
 

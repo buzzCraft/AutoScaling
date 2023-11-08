@@ -6,12 +6,10 @@ logger = logging.getLogger('scaler')
 import dotenv
 dotenv.load_dotenv()
 
-
-
-
 class OpenStackManager:
     
-    def __init__(self):
+    def __init__(self, game):
+        # Add game name
         self.conn = connection.Connection(
             auth_url=os.getenv("OS_AUTH_URL"),
             project_name=os.getenv("OS_PROJECT_NAME"),
@@ -24,6 +22,7 @@ class OpenStackManager:
         self.flavor_name = os.getenv("FLAVOR_NAME")
         self.network_name = os.getenv("NETWORK_NAME")
         self.instance_base = os.getenv("INSTANCE_BASE")
+        self.instance_base = f"{game}-{self.instance_base}"
         
     def scale_up_servers(self, num_servers):
         """Scale up the number of servers based on the given image."""
