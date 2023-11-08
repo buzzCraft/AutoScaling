@@ -70,8 +70,11 @@ def setup_g(game, nub_server, capacity_per_server, baseload, number = 1, scaler=
     """Calculate the baseload for the game"""
     print(game)
     p_min, p_max = get_min_max(game=game)
-    p_min = int(p_min)
-    p_max = int(p_max)
+    try:
+        p_min = int(p_min)
+        p_max = int(p_max)
+    except:
+        raise ValueError(f"p_min or p_max is not an integer: {p_min}, {p_max} for game {game}")
 
     # Round down to nearest 5000 for easier calculations
     p_min = p_min - (p_min % 5000)
