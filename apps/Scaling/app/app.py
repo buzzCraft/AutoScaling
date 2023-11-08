@@ -37,7 +37,7 @@ game_count = {}
 for game in game_list:
     game_count[game] = game_count.get(game, 0) + 1
 game_occurrence = {}
-result = []
+list_of_games = []
 for idx, game in enumerate(game_list):
     # Count the game occurrence for suffixing
     game_occurrence[game] = game_occurrence.get(game, 0) + 1
@@ -49,7 +49,7 @@ for idx, game in enumerate(game_list):
     else:
         game_name = game
 
-    result.append(
+    list_of_games.append(
         [
             game_name.strip(),  # .strip() to remove leading/trailing whitespace
             int(nub_server_list[idx]),
@@ -104,7 +104,7 @@ def setup_g(game, nub_server, capacity_per_server, baseload, number = 1, scaler=
 
 
 scaler_list = []
-for game in game_list:
+for game in list_of_games:
     logger.info(f"Setting up scaler for {game}")
     game_name = game[0]
     # The game name should be GameName 1, GameName 2, etc. if there are multiple games of the same type
