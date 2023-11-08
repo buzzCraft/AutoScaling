@@ -111,15 +111,13 @@ scaler_list = []
 for game in list_of_games:
     logger.info(f"Setting up scaler for {game}")
     game_name = game[0]
-    # The game name should be GameName 1, GameName 2, etc. if there are multiple games of the same type
+    # The game name should be Game Name 1, Game Name 2, etc. if there are multiple games of the same type
     # Strip the number from the name and add it to a number var
-    try:
-        game_number = game_name.split(" ")[1]
-    except:
-        logger.info(f"Game {game_name} has no number")
-        game_number = random.randint(1, 100)
+    if game_name.rstrip().endswith(('1', '2', '3', '4', '5', '6', '7', '8', '9', '0')):
+        # Split only on the last space to get the number
+        game_name, game_number = game_name.rsplit(' ', 1)
+        game_number = int(game_number) 
     # And remove the number from the name
-    game_name = game_name.split(" ")[0]
     nub_server = int(game[1])
     scaling_scheme = int(game[2])
     fake = int(game[3])
