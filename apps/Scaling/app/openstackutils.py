@@ -96,6 +96,23 @@ class OpenStackManager:
 
         except Exception as e:
             logger.error(f"Error in deleting instance or its volumes: {e}")
+        
+        self.cleanup_unused_volumes()
+
+    def cleanup_unused_volumes(self):
+        """Delete all volumes that are in 'Available' state."""
+        try:
+            all_volumes = self.conn.block_storage.volumes(details=True)
+            available_volumes = [vol for vol in all_volumes if vol.status == 'Available']
+
+            for volume in available_volumes:
+                self.conn.block_storage.delete_volume(volume.id, ignore_missing=False)
+                logger.info(f"Deleted available volume {volume.id}")
+
+            logger.info("Completed cleanup of unused volumes.")
+
+        except Exception as e:
+            logger.error(f"Error during volume cleanup: {e}")
 
 
 
