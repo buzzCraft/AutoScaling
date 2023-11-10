@@ -78,13 +78,15 @@ class OpenStackManager:
         
         # Sort filtered servers by created date
         newest_server = sorted(filtered_servers, key=lambda s: s.created_at, reverse=True)[0]
-        
+        attachments = self.conn.compute.volume_attachments(newest_server)
         # Delete the newest server with the specified base name
         self.conn.compute.delete_server(newest_server)
 
         
         # Wait for the server to be deleted
         self.conn.compute.wait_for_delete(newest_server)
+        for attachment in attachments:
+            self.conn.block_storage.delete_volume(attachment.volume_id)
         logger.info(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
         return newest_server.name
 
