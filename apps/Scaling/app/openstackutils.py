@@ -60,38 +60,38 @@ class OpenStackManager:
         except Exception as e:
             logger.error("Error starting new VM" + e)
             return None
-    
-    def delete_instance(self):
-        """Delete the most recently created VM instance with a specific base name and wait for its deletion."""
+        
+    def delete_instance(self, instance_id):
+        """Delete an instance and its attached volumes."""
+        try:
+            # Fetch all servers
+            servers = list(self.conn.compute.servers())
+            
+            # Filter servers with the specified instance base name
+            filtered_servers = [server for server in servers if self.instance_base in server.name]
+            
+            # If no matching servers, nothing to delete
+            if not filtered_servers:
+                logger.warning(f"No instances found with base name {self.instance_base}!")
+                return
+            
+            # Sort filtered servers by created date
+            instance_id = sorted(filtered_servers, key=lambda s: s.created_at, reverse=True)[0]
+            instance = self.conn.compute.get_server(instance_id)
 
-        # Fetch all servers
-        servers = list(self.conn.compute.servers())
-        print(servers)
-        
-        # Filter servers with the specified instance base name
-        filtered_servers = [server for server in servers if self.instance_base in server.name]
-        
-        # If no matching servers, nothing to delete
-        if not filtered_servers:
-            logger.warning(f"No instances found with base name {self.instance_base}!")
-            return
-        
-        # Sort filtered servers by created date
-        newest_server = sorted(filtered_servers, key=lambda s: s.created_at, reverse=True)[0]
-        attachments = self.conn.compute.volume_attachments(newest_server)
-        # Delete the newest server with the specified base name
-        self.conn.compute.delete_server(newest_server)
+            # Retrieve and delete all attached volumes
+            for volume_attachment in instance.volume_attachments:
+                volume = self.conn.block_storage.get_volume(volume_attachment["volumeId"])
+                self.conn.block_storage.delete_volume(volume, ignore_missing=False)
+                logger.info(f"Deleted volume {volume.id}")
 
-        
-        # Wait for the server to be deleted
-        self.conn.compute.wait_for_delete(newest_server)
-        for attachment in attachments:
-            try:
-                self.conn.block_storage.delete_volume(attachment.volume_id)
-            except Exception as e:
-                logger.error("Error deleting volume" + e)
-        logger.info(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
-        return newest_server.name
+            # Now delete the instance
+            self.conn.compute.delete_server(instance_id)
+            logger.info(f"Deleted instance {instance_id}")
+
+        except Exception as e:
+            logger.error(f"Error in deleting instance or its volumes: {e}")
+
 
 
 if __name__ == "__main__":
