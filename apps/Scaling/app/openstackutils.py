@@ -79,10 +79,15 @@ class OpenStackManager:
             instance_id = sorted(filtered_servers, key=lambda s: s.created_at, reverse=True)[0]
             instance = self.conn.compute.get_server(instance_id)
 
-            # Retrieve and delete all attached volumes
-            for volume_attachment in instance.volume_attachments:
-                volume = self.conn.block_storage.get_volume(volume_attachment["volumeId"])
-                self.conn.block_storage.delete_volume(volume, ignore_missing=False)
+            # Retrieve all volumes
+            all_volumes = self.conn.block_storage.volumes(details=True)
+
+            # Filter out volumes attached to the instance
+            attached_volumes = [vol for vol in all_volumes if vol.attachments and any(att['server_id'] == instance_id for att in vol.attachments)]
+
+            # Delete attached volumes
+            for volume in attached_volumes:
+                self.conn.block_storage.delete_volume(volume.id, ignore_missing=False)
                 logger.info(f"Deleted volume {volume.id}")
 
             # Now delete the instance
@@ -91,6 +96,7 @@ class OpenStackManager:
 
         except Exception as e:
             logger.error(f"Error in deleting instance or its volumes: {e}")
+
 
 
 
