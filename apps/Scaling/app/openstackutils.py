@@ -62,11 +62,10 @@ class OpenStackManager:
             return None
     
     def delete_instance(self):
-        """Delete the most recently created VM instance with a specific base name, its attached volumes, and wait for its deletion."""
+        """Delete the most recently created VM instance and its associated volume."""
 
         # Fetch all servers
         servers = list(self.conn.compute.servers())
-        print(servers)
 
         # Filter servers with the specified instance base name
         filtered_servers = [server for server in servers if self.instance_base in server.name]
@@ -79,36 +78,26 @@ class OpenStackManager:
         # Sort filtered servers by created date
         newest_server = sorted(filtered_servers, key=lambda s: s.created_at, reverse=True)[0]
 
-        # Fetch the detailed server object to get volume attachments
-        server_details = self.conn.compute.get_server(newest_server.id)
-        attached_volumes = server_details.volumes_attached
+        # Get the volume attached to the server (assuming one root volume)
+        volumes = list(self.conn.compute.volumes(newest_server))
+        volume_id = volumes[0].id if volumes else None
 
-        # Detach all volumes from the server
-        for volume in attached_volumes:
-            self.conn.compute.detach_volume(newest_server, volume['id'])
-            # Optionally, wait for the volume to be detached
-            # self.conn.block_storage.wait_for_status(volume, 'available', interval=2, wait=120)
-
-        # Delete the newest server with the specified base name
-        self.conn.compute.delete_server(newest_server)
-
-        # Wait for the server to be deleted
+        # Delete the server
+        self.conn.compute.delete_server(newest_server.id)
         self.conn.compute.wait_for_delete(newest_server)
-        logger.info(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
 
-        # Delete detached volumes
-        for volume in attached_volumes:
-            self.conn.block_storage.delete_volume(volume['id'])
-            # Optionally, wait for the volume to be deleted
-            # self.conn.block_storage.wait_for_delete(volume, interval=2, wait=120)
+        # If there's a volume, delete it
+        if volume_id:
+            self.conn.block_storage.delete_volume(volume_id)
+            # Optionally wait for the volume to be deleted
+            # self.conn.block_storage.wait_for_status(volume, 'deleting', 'deleted', interval=2, wait=120)
 
-        logger.info(f"Deleted server {newest_server.name} and its attached volumes.")
+        logger.info(f"Deleted server {newest_server.name} and its associated volume.")
         return newest_server.name
 
 
-
 if __name__ == "__main__":
-    osm = OpenStackManager(game = "Test")
+    osm = OpenStackManager("Test")
     inp = ""
     while inp != "Q":
         inp = input("Scale [U]p or [D]own?")
