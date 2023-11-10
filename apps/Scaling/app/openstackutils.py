@@ -43,7 +43,7 @@ class OpenStackManager:
     def create_instance(self, instance_name):
         """Create a new VM instance."""
         try:    
-            image = self.conn.compute.find_image(self.image_name)
+            image = self.conn.compute.find_image("Ubuntu-20.04-LTS")
             flavor = self.conn.compute.find_flavor(self.flavor_name)
             network = self.conn.network.find_network(self.network_name)
 
@@ -52,7 +52,6 @@ class OpenStackManager:
                 image_id=image.id,
                 flavor_id=flavor.id,
                 networks=[{"uuid": network.id}],
-                block_device_mapping=None  # Ensures no block storage volume is attached
                 )
             
             server = self.conn.compute.wait_for_server(server)
@@ -100,20 +99,6 @@ class OpenStackManager:
         
         self.cleanup_unused_volumes()
 
-    def cleanup_unused_volumes(self):
-        """Delete all volumes that are in 'Available' state."""
-        try:
-            all_volumes = self.conn.block_storage.volumes(details=True)
-            available_volumes = [vol for vol in all_volumes if vol.status == 'Available']
-
-            for volume in available_volumes:
-                self.conn.block_storage.delete_volume(volume.id, ignore_missing=False)
-                logger.info(f"Deleted available volume {volume.id}")
-
-            logger.info("Completed cleanup of unused volumes.")
-
-        except Exception as e:
-            logger.error(f"Error during volume cleanup: {e}")
 
 
 
