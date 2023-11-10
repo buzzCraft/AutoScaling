@@ -61,7 +61,7 @@ class OpenStackManager:
             logger.error("Error starting new VM" + e)
             return None
         
-    def delete_instance(self, instance_id):
+    def delete_instance(self):
         """Delete an instance and its attached volumes."""
         try:
             # Fetch all servers
