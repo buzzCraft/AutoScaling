@@ -51,8 +51,9 @@ class OpenStackManager:
                 name=instance_name,
                 image_id=image.id,
                 flavor_id=flavor.id,
-                networks=[{"uuid": network.id}]
-            )
+                networks=[{"uuid": network.id}],
+                block_device_mapping=None  # Ensures no block storage volume is attached
+                )
             
             server = self.conn.compute.wait_for_server(server)
             logger.info(f"Created server {server.name} with id {server.id}")
