@@ -86,7 +86,10 @@ class OpenStackManager:
         # Wait for the server to be deleted
         self.conn.compute.wait_for_delete(newest_server)
         for attachment in attachments:
-            self.conn.block_storage.delete_volume(attachment.volume_id)
+            try:
+                self.conn.block_storage.delete_volume(attachment.volume_id)
+            except Exception as e:
+                logger.error("Error deleting volume" + e)
         logger.info(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
         return newest_server.name
 
@@ -97,8 +100,8 @@ if __name__ == "__main__":
     while inp != "Q":
         inp = input("Scale [U]p or [D]own?")
         if inp == "U":
-            osm.scale_up_servers(3)
+            osm.scale_up_servers(1)
         elif inp == "D":
-            osm.scale_down_servers(3)
+            osm.scale_down_servers(1)
         else:
             print("Invalid input")
