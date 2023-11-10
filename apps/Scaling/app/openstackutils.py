@@ -108,7 +108,7 @@ class OpenStackManager:
 
 
 if __name__ == "__main__":
-    osm = OpenStackManager()
+    osm = OpenStackManager(game = "Test")
     inp = ""
     while inp != "Q":
         inp = input("Scale [U]p or [D]own?")
