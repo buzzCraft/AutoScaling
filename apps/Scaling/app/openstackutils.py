@@ -62,37 +62,30 @@ class OpenStackManager:
             return None
     
     def delete_instance(self):
-        """Delete the most recently created VM instance and its associated volume."""
+        """Delete the most recently created VM instance with a specific base name and wait for its deletion."""
 
         # Fetch all servers
         servers = list(self.conn.compute.servers())
-
+        print(servers)
+        
         # Filter servers with the specified instance base name
         filtered_servers = [server for server in servers if self.instance_base in server.name]
-
+        
         # If no matching servers, nothing to delete
         if not filtered_servers:
             logger.warning(f"No instances found with base name {self.instance_base}!")
             return
-
+        
         # Sort filtered servers by created date
         newest_server = sorted(filtered_servers, key=lambda s: s.created_at, reverse=True)[0]
+        
+        # Delete the newest server with the specified base name
+        self.conn.compute.delete_server(newest_server)
 
-        # Get the volume attached to the server (assuming one root volume)
-        volumes = list(self.conn.compute.volumes(newest_server))
-        volume_id = volumes[0].id if volumes else None
-
-        # Delete the server
-        self.conn.compute.delete_server(newest_server.id)
+        
+        # Wait for the server to be deleted
         self.conn.compute.wait_for_delete(newest_server)
-
-        # If there's a volume, delete it
-        if volume_id:
-            self.conn.block_storage.delete_volume(volume_id)
-            # Optionally wait for the volume to be deleted
-            # self.conn.block_storage.wait_for_status(volume, 'deleting', 'deleted', interval=2, wait=120)
-
-        logger.info(f"Deleted server {newest_server.name} and its associated volume.")
+        logger.info(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
         return newest_server.name
 
 
