@@ -97,7 +97,7 @@ class OpenStackManager:
         except Exception as e:
             logger.error(f"Error in deleting instance or its volumes: {e}")
         
-        self.cleanup_unused_volumes()
+    
 
 
 
