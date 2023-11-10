@@ -62,29 +62,27 @@ class OpenStackManager:
             return None
     
     def delete_instance(self):
+        """Delete the most recently created VM instance with a specific base name and wait for its deletion."""
+
         # Fetch all servers
         servers = list(self.conn.compute.servers())
-
+        print(servers)
+        
         # Filter servers with the specified instance base name
         filtered_servers = [server for server in servers if self.instance_base in server.name]
-
+        
         # If no matching servers, nothing to delete
         if not filtered_servers:
             logger.warning(f"No instances found with base name {self.instance_base}!")
             return
-
+        
         # Sort filtered servers by created date
         newest_server = sorted(filtered_servers, key=lambda s: s.created_at, reverse=True)[0]
-
-        # Identify and delete attached volumes
-        attached_volumes = self.conn.compute.volumes(newest_server.id)
-        for volume in attached_volumes:
-            logger.info(f"Deleting attached volume {volume.id}")
-            self.conn.block_storage.delete_volume(volume.id)
-
+        
         # Delete the newest server with the specified base name
         self.conn.compute.delete_server(newest_server)
 
+        
         # Wait for the server to be deleted
         self.conn.compute.wait_for_delete(newest_server)
         logger.info(f"Confirmed deletion of server {newest_server.name} with id {newest_server.id}")
@@ -97,8 +95,8 @@ if __name__ == "__main__":
     while inp != "Q":
         inp = input("Scale [U]p or [D]own?")
         if inp == "U":
-            osm.scale_up_servers(1)
+            osm.scale_up_servers(3)
         elif inp == "D":
-            osm.scale_down_servers(1)
+            osm.scale_down_servers(3)
         else:
             print("Invalid input")
