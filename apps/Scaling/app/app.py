@@ -138,6 +138,7 @@ while True:  # This will keep running indefinitely
     # Call the scaler function with the scaling scheme selected, baseload, and capacity per server
     for scaler in scaler_list:
         scaler.scale()
+        time.sleep(10)
     time.sleep(
-        240
+        300
     )  # Introduce a delay of 240 seconds (4 minutes) before the next iteration

@@ -1,8 +1,10 @@
 from utils import get_min_max, get_running_servers, get_current_players
 from openstackutils import OpenStackManager
 from fakeserver import FakeServer
+import datetime
 import logging
 logger = logging.getLogger('scaler')
+
 class Scaler:
     """
     Scaler class to scale the game servers based on the scaling scheme.
@@ -25,6 +27,8 @@ class Scaler:
         # Just init to something
         self.current_players = 1000
         self.current_players = int(self.get_current_players())
+        self.previous_player_count = self.current_players
+        self.previous_time = datetime.now()
         
         self.fake = fake
         if self.fake:
@@ -81,7 +85,10 @@ class Scaler:
         logger.debug(f"Current players: {current_players}")
         logger.debug(f"Current servers: {current_servers}")
         current_players = int(current_players) - self.baseload
-        current_capacity = (int(current_servers) * self.capacity_per_server)
+        try:
+            current_capacity = (int(current_servers) * self.capacity_per_server)
+        except:
+            current_capacity = 0
         # Based on current players, calculate the target capacity
         target_capacity = current_players
         # Calculate the percentage of capacity
@@ -111,17 +118,17 @@ class Scaler:
         # Scale up if above 80% capacity
         while capacity_percentage > 80:
             required_servers += 1
-            if required_servers + current_servers == self.number_of_servers:
+            if required_servers + current_servers >= self.number_of_servers:
                 break
             capacity_percentage = self.calc_capacity(current_servers + required_servers, current_players)
 
-        # Scale down if below 50% capacity but ensure that we do not scale down below 1 server
+        # Scale down if below 40% capacity but ensure that we do not scale down below 1 server
         while capacity_percentage < 40 and current_servers + required_servers > 1:
             required_servers -= 1
-            if required_servers + current_servers == 1:
+            if required_servers + current_servers <= 1:
                 break
             new_capacity_percentage = self.calc_capacity(current_servers + required_servers, current_players)
-            # If scaling down once would bring us above 50%, we check to see if we should scale down
+            # If scaling down once would bring us above 40%, we check to see if we should scale down
             if new_capacity_percentage >= 40:
                 break  # We've reached an optimal number of servers
             capacity_percentage = new_capacity_percentage
@@ -129,6 +136,46 @@ class Scaler:
         logger.debug(f"Required servers: {required_servers}")
         return required_servers
     
+    def scaling_based_on_derivative(self, current_servers, current_players):
+        """
+        Scale servers based on the rate of change of player count (derivative).
+
+        :param current_servers: The current number of servers.
+        :param current_players: The current number of players.
+        :param time_delta: The time passed since the last measurement in minutes.
+        :return: The number of servers to scale up or down.
+        """
+        now = datetime.now()
+        time_delta = (now - self.previous_time).total_seconds() / 60
+        self.previous_time = now
+        # Calculate the rate of change of player count
+        player_change_rate = (current_players - self.previous_player_count) / time_delta
+
+        # Define thresholds for scaling
+        SCALE_UP_THRESHOLD = 0.8  # Scale up if server is at 80% capacity
+        SCALE_DOWN_THRESHOLD = 0.4  # Scale down if server is below 40% capacity
+
+        # Calculate the current load percentage
+        capacity_percentage = self.calc_capacity(current_servers, current_players)
+
+        required_servers = 0
+
+        # If player count is increasing rapidly, scale up more aggressively
+        if player_change_rate > 0 and capacity_percentage > SCALE_UP_THRESHOLD:
+            # Calculate additional servers needed based on rate of player increase
+            required_servers = int(player_change_rate * self.server_capacity)  # Assuming 'server_capacity' is a known value
+
+        # If player count is decreasing, consider scaling down
+        elif player_change_rate < 0 and capacity_percentage < SCALE_DOWN_THRESHOLD and current_servers > 1:
+            # Calculate the number of servers that can be removed based on rate of player decrease
+            required_servers = -int(abs(player_change_rate) * self.server_capacity)
+
+        # Ensure we do not scale down below 1 server or exceed the max number of servers
+        required_servers = max(-current_servers + 1, required_servers)  # Don't go below 1 server
+        required_servers = min(self.number_of_servers - current_servers, required_servers)  # Don't exceed max servers
+
+        return required_servers
+
 
         
     
