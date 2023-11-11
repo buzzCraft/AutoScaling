@@ -1,60 +1,51 @@
-
-from flask import Flask, Response, jsonify, request
+from fastapi import FastAPI, Response, HTTPException
 from openstack_check import get_running_servers
 from fake_servers import FakeServer
 import logging
+from typing import Dict
 
-fake_servers = {}
+app = FastAPI()
+
+fake_servers: Dict[str, FakeServer] = {}
 
 logging.basicConfig(
     level=logging.WARNING,
-    filename='server_status.log',  # Set the minimum log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    filename='server_status.log',
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 )
 
 logger = logging.getLogger('get_running_servers')
-
-app = Flask(__name__)
 logger.info("Starting OpenStack app")
 
-@app.route('/metrics', methods=['GET'])
+@app.get("/metrics")
 def metrics():
-    response_str = ""
-    # Get the count of "real" running servers
-    real_running_servers = get_running_servers()
+    response_str = "running_servers_total {}\n".format(get_running_servers())
 
-    # Initialize the response string with the real server count
-    response_str = f"running_servers_total {real_running_servers}\n"
-
-    # Add metrics for each fake server by gamename
     for gamename, fake_server in fake_servers.items():
-        response_str += f"fake_servers_total{{gamename=\"{gamename}\"}} {fake_server.running_servers}\n"
+        response_str += 'fake_servers_total{{gamename="{}"}} {}\n'.format(gamename, fake_server.running_servers)
 
-    return Response(response_str, content_type="text/plain")
+    return Response(content=response_str, media_type="text/plain")
 
-@app.route('/fakeserver/create/<gamename>', methods=['POST'])
-def create_fakeserver(gamename):
+@app.post("/fakeserver/create/{gamename}")
+def create_fakeserver(gamename: str):
     if gamename not in fake_servers:
         fake_servers[gamename] = FakeServer(gamename)
-    return jsonify(fake_servers[gamename].getdata())
+    return fake_servers[gamename].getdata()
 
-@app.route('/fakeserver/scaleup/<gamename>', methods=['POST'])
-def scale_up(gamename):
+@app.post("/fakeserver/scaleup/{gamename}")
+def scale_up(gamename: str):
     if gamename in fake_servers:
         fake_servers[gamename].scale_up(1)
-        return jsonify(fake_servers[gamename].getdata())
-    else:
-        return jsonify({"error": "Fake server not found"}), 404
+        return fake_servers[gamename].getdata()
+    raise HTTPException(status_code=404, detail="Fake server not found")
 
-@app.route('/fakeserver/scaledown/<gamename>', methods=['POST'])
-def scale_down(gamename): 
+@app.post("/fakeserver/scaledown/{gamename}")
+def scale_down(gamename: str):
     if gamename in fake_servers:
         fake_servers[gamename].scale_down(1)
-        return jsonify(fake_servers[gamename].getdata())
-    else:
-        return jsonify({"error": "Fake server not found"}), 404
-
-    
+        return fake_servers[gamename].getdata()
+    raise HTTPException(status_code=404, detail="Fake server not found")
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=5000)
