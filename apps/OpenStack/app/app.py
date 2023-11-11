@@ -19,15 +19,16 @@ logger.info("Starting OpenStack app")
 
 @app.route('/metrics', methods=['GET'])
 def metrics():
-    # Get the count of "real" running servers
-    real_running_servers = get_running_servers()
+    # # Get the count of "real" running servers
+    # real_running_servers = get_running_servers()
 
-    # Initialize the response string with the real server count
-    response_str = f"running_servers_total {real_running_servers}\n"
+    # # Initialize the response string with the real server count
+    # response_str = f"running_servers_total {real_running_servers}\n"
 
-    # Add metrics for each fake server by gamename
-    for gamename, fake_server in fake_servers.items():
-        response_str += f"fake_servers_total{{gamename=\"{gamename}\"}} {fake_server.running_servers}\n"
+    # # Add metrics for each fake server by gamename
+    # for gamename, fake_server in fake_servers.items():
+    #     response_str += f"fake_servers_total{{gamename=\"{gamename}\"}} {fake_server.running_servers}\n"
+    response_str = "Test"
 
     return Response(response_str, content_type="text/plain")
 
