@@ -19,7 +19,7 @@ def get_running_servers():
             return len(running_servers) - 1
 
     except Exception as e:
-        logger.error(e)
+        # logger.error(e)
         return -1
 
     
