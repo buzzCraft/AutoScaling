@@ -28,7 +28,7 @@ class Scaler:
         self.current_players = 1000
         self.current_players = int(self.get_current_players())
         self.previous_player_count = self.current_players
-        self.previous_time = datetime.now()
+        self.previous_time = datetime.datetime.now()
         
         self.fake = fake
         if self.fake:
