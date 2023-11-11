@@ -10,21 +10,22 @@ project_name = os.getenv("OS_PROJECT_NAME")
 username = os.getenv("OS_USERNAME")
 password = os.getenv("OS_PASSWORD")
 
+# Create a single connection to OpenStack
+conn = connection.Connection(auth_url=auth_url,
+                                 project_name=project_name,
+                                 username=username,
+                                 password=password,
+                                 user_domain_id='default',
+                                 project_domain_id='default')
+
 def get_running_servers():
     try:
-        conn = connection.Connection(auth_url=auth_url,
-                                     project_name=project_name,
-                                     username=username,
-                                     password=password,
-                                     user_domain_id='default',
-                                     project_domain_id='default')
-        
+        # Use the existing connection to OpenStack
         active_servers_count = 0
         for server in conn.compute.servers():
             if server.status == 'ACTIVE':
                 active_servers_count += 1
 
-        conn.close()
         return active_servers_count - 1
 
     except Exception as e:
