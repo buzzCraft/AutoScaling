@@ -71,9 +71,14 @@ class Scaler:
 
         
         # Scaling decision based on the scaling scheme
-        if self.scaling_scheme != 0:
+        if self.scaling_scheme == 1:
+            required_servers = self.scaling_1(current_servers, current_players)
+        elif self.scaling_scheme == 2:
+            required_servers = self.scaling_2(current_servers, current_players)
+        else:
             required_servers = self.scaling_1(current_servers, current_players)
         logger.info(f"Required servers: {required_servers}")
+
         if required_servers > 0:            
             self.create_instance(required_servers)
         elif required_servers < 0:
@@ -136,6 +141,40 @@ class Scaler:
         logger.debug(f"Required servers: {required_servers}")
         return required_servers
     
+    def scaling_2(self, current_servers, current_players, s_up=80, s_down=40):
+        """
+        Scale based on current players
+        Scale up if servers are on s_up capacity
+        Scale down if servers are on s_down capacity, but not below s_up capacity
+
+        """
+        logger.debug("Scaling scheme 2")
+        required_servers = 0
+        capacity_percentage = self.calc_capacity(current_servers, current_players)
+
+        # Scale up if above s_up% capacity
+        while capacity_percentage > s_up:
+            required_servers += 1
+            if required_servers + current_servers >= self.number_of_servers:
+                break
+            capacity_percentage = self.calc_capacity(current_servers + required_servers, current_players)
+
+        # Scale down if below s_down capacity, but not below s_up capacity
+        while capacity_percentage < s_down and current_servers + required_servers > 1:
+            required_servers -= 1
+            new_capacity_percentage = self.calc_capacity(current_servers + required_servers, current_players)
+            if new_capacity_percentage >= s_up:
+                required_servers += 1  # Go one step back up
+                break  # Stop scaling down if we reach or exceed the s_up threshold
+            elif current_servers + required_servers < 1:
+                required_servers += 1  # Ensure we don't go below 1 server
+                break
+            capacity_percentage = new_capacity_percentage
+
+        logger.debug(f"New capacity: {capacity_percentage}")     
+        logger.debug(f"Required servers: {required_servers}")
+        return required_servers
+        
     def scaling_based_on_derivative(self, current_servers, current_players):
         """
         Scale servers based on the rate of change of player count (derivative).
