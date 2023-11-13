@@ -99,7 +99,7 @@ class Scaler:
         # Calculate the percentage of capacity
         if current_capacity == 0:
             current_capacity = 1000
-            capacity_percentage = target_capacity / current_capacity * 100
+        capacity_percentage = target_capacity / current_capacity * 100
         logger.debug(f"Current players above baseload: {current_players}")
         logger.debug(f"Current capacity: {current_capacity}")
         logger.debug(f"Target capacity: {target_capacity}")
