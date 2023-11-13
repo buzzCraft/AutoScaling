@@ -191,6 +191,7 @@ class Scaler:
         :param time_delta: The time passed since the last measurement in minutes.
         :return: The number of servers to scale up or down.
         """
+        required_servers = 0
         now = datetime.datetime.now()
         time_delta = (now - self.previous_time).total_seconds() / 60
         self.previous_time = now
