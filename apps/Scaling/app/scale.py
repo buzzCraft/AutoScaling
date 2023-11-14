@@ -199,7 +199,7 @@ class Scaler:
         player_change_rate = (current_players - self.previous_player_count) / time_delta
 
         # Predict player count in 5 minutes
-        predicted_player_count = current_players + player_change_rate * 5
+        predicted_player_count = current_players + player_change_rate
 
         # Calculate the current load percentage
         capacity_percentage = self.calc_capacity(current_servers, predicted_player_count)
