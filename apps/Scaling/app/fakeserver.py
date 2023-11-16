@@ -8,8 +8,9 @@ class FakeServer:
         self.max_servers = max_servers
         self.gamename = gamename
         self.servers = 0
+        self.server_address = "http://10.196.37.200:5000"
         self.create_fakeserver()
-        self.app_server = "http://10.196.37.200:5000"
+        
 
     def scale_up_servers(self, nr_of_servers):
         logger.info(f"Scaling up {nr_of_servers} fake servers")
@@ -24,25 +25,25 @@ class FakeServer:
             self.servers -= 1
 
     def create_fakeserver(self):
-        url = f"{self.app_server}/fakeserver/create/{self.gamename}"
+        url = f"{self.server_address}/fakeserver/create/{self.gamename}"
         response = requests.post(url)
         logger.debug(response.json())
         return response.json()
 
     def scale_up(self):
-        url = f"{self.app_server}/fakeserver/scaleup/{self.gamename}"
+        url = f"{self.server_address}/fakeserver/scaleup/{self.gamename}"
         response = requests.post(url)
         logger.debug(response.json())
         return response.json()
 
     def scale_down(self):
-        url = f"{self.app_server}/fakeserver/scaledown/{self.gamename}"
+        url = f"{self.server_address}/fakeserver/scaledown/{self.gamename}"
         response = requests.post(url)
         logger.debug(response.json())
         return response.json()
     
     def get_servers(self):
-        url = f"{self.app_server}/fakeserver/{self.gamename}"
+        url = f"{self.server_address}/fakeserver/{self.gamename}"
         response = requests.post(url)
         data = response.json()
         number_of_servers = data['running_servers']
