@@ -46,7 +46,7 @@ def scale_down(gamename: str):
         return fake_servers[gamename].getdata()
     raise HTTPException(status_code=404, detail="Fake server not found")
 
-@app.get("/fakeserver/{gamename}")
+@app.post("/fakeserver/{gamename}")
 def get_fakeserver(gamename: str):
     # Return the number of running servers for the given game
     if gamename in fake_servers:
