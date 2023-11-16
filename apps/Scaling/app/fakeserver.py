@@ -47,6 +47,7 @@ class FakeServer:
         response = requests.post(url)
         data = response.json()
         number_of_servers = data['running_servers']
+        self.servers = int(number_of_servers)
 
         return int(number_of_servers)
 
