@@ -68,7 +68,8 @@ class Scaler:
         current_players = self.get_current_players()
         current_servers = self.get_running_servers()
         required_servers = 0
-        logger.info(f"Current players: {current_players}, Current servers: {current_servers}")
+        logger.info(f"Current players: {current_players}, Current servers: {current_servers}, Scaling scheme: {self.scaling_scheme}, 
+                    server capacity: {self.capacity_per_server*current_servers}, Baseload: {self.baseload}")
 
         
         # Scaling decision based on the scaling scheme
