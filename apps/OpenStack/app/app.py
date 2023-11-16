@@ -46,6 +46,16 @@ def scale_down(gamename: str):
         return fake_servers[gamename].getdata()
     raise HTTPException(status_code=404, detail="Fake server not found")
 
+@app.get("/fakeserver/{gamename}")
+def get_fakeserver(gamename: str):
+    # Return the number of running servers for the given game
+    if gamename in fake_servers:
+
+        servers = fake_servers[gamename].get_running_servers()
+        #Return the number of running servers as a number
+        return {"running_servers": servers}
+    raise HTTPException(status_code=404, detail="Fake server not found")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=5000)

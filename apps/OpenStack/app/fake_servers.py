@@ -12,4 +12,7 @@ class FakeServer:
 
     def scale_down(self, num_servers):
         self.running_servers -= num_servers
+    
+    def get_running_servers(self):
+        return self.running_servers
         

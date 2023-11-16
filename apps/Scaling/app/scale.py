@@ -2,6 +2,7 @@ from utils import get_min_max, get_running_servers, get_current_players
 from openstackutils import OpenStackManager
 from fakeserver import FakeServer
 import datetime
+import math
 import logging
 logger = logging.getLogger('scaler')
 
@@ -232,7 +233,43 @@ class Scaler:
         logger.debug(f"New capacity: {capacity_percentage}")     
         logger.debug(f"Required servers: {required_servers}")
         return required_servers
+    
+    def scaling_4(self, current_servers, current_players, free_spots=1000):
+        """
+        Scale on free player spots instead of server capacity %
+        """
 
+        required_servers = 0
+        # Calculate the current server status
+        current_capacity = (int(current_servers) * self.capacity_per_server)
+        current_free_spots = current_capacity - current_players
+        logger.debug(f"Current free spots: {current_free_spots}")
+        # Calculate the target capacity
+        target_capacity = current_players + free_spots
+        # Calculate the required servers
+        required_servers = (target_capacity - current_capacity) / self.capacity_per_server
+        # Round up to the nearest integer
+        required_servers = math.ceil(required_servers)
+        logger.debug(f"Required servers: {required_servers}")
+        return required_servers
+    
+    def scaling_5(self, current_servers, current_players, free_spots=1000):
+        """
+        Combine scaling 3 and 4
+        Calculate free spots based on the derivative of player count
+        """
+        required_servers = 0
+        now = datetime.datetime.now()
+        time_delta = (now - self.previous_time).total_seconds() / 60
+        self.previous_time = now
+        # Calculate the rate of change of player count
+        player_change_rate = (current_players - self.previous_player_count) / time_delta
+        # New capacity is player count + free spots + rate of change
+        new_capacity = current_players + free_spots + player_change_rate
+
+        return self.scaling_4(current_servers, new_capacity, free_spots=free_spots)
+
+        
 
 
         
