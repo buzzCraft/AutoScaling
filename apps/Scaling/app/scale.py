@@ -78,6 +78,10 @@ class Scaler:
             required_servers = self.scaling_2(current_servers, current_players,s_up=80, s_down=75)
         elif self.scaling_scheme == 3:
             required_servers = self.scaling_3(current_servers, current_players,s_up=80, s_down=75)
+        elif self.scaling_scheme == 4:
+            required_servers = self.scaling_4(current_servers, current_players)
+        elif self.scaling_scheme == 5:
+            required_servers = self.scaling_5(current_servers, current_players)
         else:
             required_servers = self.scaling_1(current_servers, current_players)
         logger.info(f"Required servers: {required_servers}")
