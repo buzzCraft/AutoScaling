@@ -208,7 +208,10 @@ class Scaler:
         time_delta = (now - self.previous_time).total_seconds() / 60
         self.previous_time = now
         # Calculate the rate of change of player count
-        player_change_rate = (current_players - self.previous_player_count) / time_delta
+        if current_players - self.previous_player_count == 0:
+            player_change_rate = 0
+        else:
+            player_change_rate = (current_players - self.previous_player_count) / time_delta
 
         # Predict player count in 5 minutes
         predicted_player_count = current_players + player_change_rate
@@ -232,6 +235,7 @@ class Scaler:
             elif current_servers + required_servers < 1:
                 required_servers += 1  # Ensure we don't go below 1 server
                 break
+
             capacity_percentage = new_capacity_percentage
 
         logger.debug(f"New capacity: {capacity_percentage}")     
@@ -257,7 +261,7 @@ class Scaler:
         logger.debug(f"Required servers: {required_servers}")
         return required_servers
     
-    def scaling_5(self, current_servers, current_players, free_spots=1000):
+    def scaling_5(self, current_servers, current_players, free_spots=5000):
         """
         Combine scaling 3 and 4
         Calculate free spots based on the derivative of player count
