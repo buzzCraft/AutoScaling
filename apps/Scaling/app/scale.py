@@ -86,6 +86,8 @@ class Scaler:
             required_servers = self.scaling_1(current_servers, current_players)
         logger.info(f"Required servers: {required_servers}")
 
+        self.previous_player_count = current_players
+
         # Ensure that we do not scale above the maximum number of servers
         if required_servers + current_servers > self.number_of_servers:
             required_servers = self.number_of_servers
