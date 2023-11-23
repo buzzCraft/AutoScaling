@@ -58,7 +58,7 @@ class OpenStackManager:
             logger.info(f"Created server {server.name} with id {server.id}")
             return server.name
         except Exception as e:
-            logger.error("Error starting new VM" + e)
+            logger.error(f"Error starting new VM {e}")
             return None
         
     def delete_instance(self):

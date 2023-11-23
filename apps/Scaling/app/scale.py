@@ -90,7 +90,8 @@ class Scaler:
 
         # Ensure that we do not scale above the maximum number of servers
         if required_servers + current_servers > self.number_of_servers:
-            required_servers = self.number_of_servers
+            required_servers = self.number_of_servers - current_servers 
+            logger.warning(f"Max servers :( ): {required_servers}")
         # Ensure that we do not scale below 1 server
         elif required_servers + current_servers < 1:
             required_servers = 1
