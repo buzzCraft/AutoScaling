@@ -6,6 +6,7 @@ import time  # import the time module
 import dotenv
 import random 
 
+# Trigger gitlab runner metrics
 
 dotenv.load_dotenv()
 
