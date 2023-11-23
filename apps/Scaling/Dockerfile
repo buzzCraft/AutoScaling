@@ -6,7 +6,7 @@ RUN pip install openstacksdk python-dotenv
 
 # Copy scripts into the container
 COPY /app/ /app/
-
+COPY /error/ /error/
 # Set working directory
 WORKDIR /app
 
